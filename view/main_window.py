@@ -63,7 +63,10 @@ class MainWindow:
             click_pos = pygame.mouse.get_pos()
             click = pygame.mouse.get_pressed()
             if click_handler.check_click(click_pos, click):
-                x, y = click_handler.handle()
+                if click_handler.handle() is not None:
+                    x, y = click_handler.handle()
+                else:
+                    continue
                 self.game.turns(x, y)
                 if self.game.winner is not None:
                     pygame.time.wait(150)
