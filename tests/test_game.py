@@ -1,7 +1,6 @@
 import unittest
 from game import game as g
 from game.params import Color
-import random
 
 
 class TestGame(unittest.TestCase):
@@ -76,14 +75,6 @@ class TestGame(unittest.TestCase):
                 self.game.turns(2, 2)
             else:
                 self.game.turns(1, 2)
-        # self.game.turns(0, 0)
-        # count = 0
-        # i = 0
-        # j = 0
-        # while self.game.winner is None \
-        #         and count < self.game.board.width * self.game.board.height:
-        #     if self.game.board.map[i][j] == 0:
-        #         self.game.turns(i, j)
         self.assertIsNotNone(self.game.winner)
 
 

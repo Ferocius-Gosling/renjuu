@@ -4,7 +4,6 @@ from view import params as p
 from view import button as b
 from view.click_handler import ClickHandler
 from view.utils import get_coordinates
-from view.stone import Stone
 import pygame
 
 pygame.init()

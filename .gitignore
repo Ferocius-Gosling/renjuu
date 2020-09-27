@@ -1,3 +1,5 @@
 venv
 .idea
 */__pycache__
+view/stone.py
+game/point.py
