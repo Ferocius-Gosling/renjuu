@@ -1,26 +1,20 @@
-import unittest
-from game.params import Color
-from game import player as p
+import pytest
+from game.const import Color
 from game import board as b
+from game.player import PlayerEntity, HumanPlayer
+from game.bot_player import Bot
 
 
-class TestPlayer(unittest.TestCase):
-    def setUp(self):
-        self.first_player = p.Player(Color.black)
-        self.second_player = p.Player(Color.white)
-        self.board = b.Board(5, 5, 3)
-
-    def test_player_create(self):
-        player = p.Player(1)
-        self.assertIsNotNone(player)
-        self.assertEqual(player.color, 1)
-
-    def test_make_move_to(self):
-        self.first_player.make_move(self.board, 0, 0)
-        self.second_player.make_move(self.board, 1, 1)
-        self.assertEqual(self.board.map[0][0], 1)
-        self.assertEqual(self.board.map[1][1], 2)
+def test_player_create():
+    player = HumanPlayer(Color.black)
+    assert player is not None
+    assert player.color == Color.black
 
 
-if __name__ == '__main__':
-    unittest.main()
+def test_make_move_to():
+    board = b.Board(3, 3, 3)
+    human_player = HumanPlayer(Color.black)
+    bot_player = Bot(Color.white, PlayerEntity.bot)
+    x, y = bot_player.make_move(board)
+    assert human_player.make_move(board) is None
+    assert 0 <= x < 3 and 0 <= y < 3

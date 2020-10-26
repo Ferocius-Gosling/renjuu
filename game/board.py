@@ -1,5 +1,4 @@
-from game.params import *
-from game.player import Player
+from game.const import Color
 
 
 class Board:
@@ -9,41 +8,17 @@ class Board:
         self.length_to_win = length
         self.map = self.prepare_map()
 
+    def __getitem__(self, item):
+        return self.map[item]
+
+    def __setitem__(self, key, value):
+        self.map[key] = value
+
     def prepare_map(self):
-        points_array = []
-        for i in range(self.width):
-            points_array.append([])
-            for j in range(self.height):
-                points_array[i].append(Color.non.value)
-        return points_array
+        return [[Color.non.value] * self.height for i in range(self.width)]
 
-    def check_around(self, x, y, color):
-        directions = []
-        for i in delta:
-            for j in delta:
-                if i == 0 and j == 0:
-                    continue
-                if 0 <= x + i < self.width and 0 <= y + j < self.height:
-                    if self.map[x+i][y+j] == color.value:
-                        directions.append((i, j))
-        return directions
-
-    def find_line(self, x, y, color, direction, second_dir):
-        length = self.build_line(x, y, color, direction, 1)
-        if second_dir is not None:
-            length += self.build_line(x, y, color, second_dir, 0)
-        if length >= self.length_to_win:
-            return color
-        return None
-
-    @staticmethod
-    def find_second_dir(direction, dirs):
-        for second_dir in dirs:
-            condition = direction[0] + second_dir[0] == 0 and \
-                direction[1] + second_dir[1] == 0
-            if condition:
-                return second_dir
-        return None
+    def put_stone(self, x, y, color):
+        self[x][y] = color.value
 
     def get_condition(self, x, y):
         condition = x < 0 or \
@@ -52,12 +27,25 @@ class Board:
                 x >= self.width
         return condition
 
-    def build_line(self, x, y, color, direction, length):
-        dir_x = direction[0]
-        dir_y = direction[1]
-        while not self.get_condition(x + dir_x, y + dir_y) and\
-                self.map[x + dir_x][y + dir_y] == color.value:
-            length += 1
-            dir_x += direction[0]
-            dir_y += direction[1]
+    def find_line(self, x, y, direction, color, length):
+        dir_x_first = direction[0]
+        dir_y_first = direction[1]
+        dir_x_second = -direction[0]
+        dir_y_second = -direction[1]
+        inverse_dir = (-direction[0],-direction[1])
+        while not self.get_condition(x + dir_x_first, y + dir_y_first) and \
+                self[x + dir_x_first][y + dir_y_first] == color.value:
+            length, dir_x_first, dir_y_first = self._increment_coordinates(
+                length, dir_x_first, dir_y_first, direction)
+        while not self.get_condition(x + dir_x_second, y + dir_y_second) and \
+                self[x + dir_x_second][y + dir_y_second] == color.value:
+            length, dir_x_second, dir_y_second = self._increment_coordinates(
+                length, dir_x_second, dir_y_second, inverse_dir)
         return length
+
+    @staticmethod
+    def _increment_coordinates(length, x, y, direction):
+        length += 1
+        x += direction[0]
+        y += direction[1]
+        return length, x, y

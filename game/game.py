@@ -1,58 +1,52 @@
-from game import board, player, params, bot, point
+from game import board, player, bot_player, const
+from game.const import PlayerEntity
 
 
 class Game:
-    def __init__(self, width, height, length):
+    def __init__(self, width, height, length, enemy_type):
         self.board = board.Board(width, height, length)
+        self.enemy_type = enemy_type
+        self.black_player = None
+        self.white_player = None
         self.human_player = None
         self.bot_player = None
-        self.game_stage = params.GameStage.game_settings
-        self.is_human_current = True
+        self.is_black_current = True
         self.winner = None
 
+    @property
+    def current_player(self):
+        if self.is_black_current:
+            return self.black_player
+        else:
+            return self.white_player
+
     def restart(self):
-        self.board = board.Board(self.board.width,
-                                 self.board.height,
-                                 self.board.length_to_win)
-        self.human_player = None
-        self.bot_player = None
-        self.game_stage = params.GameStage.game_settings
-        self.is_human_current = True
+        self.board.prepare_map()
+        self.black_player = None
+        self.white_player = None
+        self.is_black_current = True
         self.winner = None
 
     def prepare_players(self, color):
-        if color == params.Color.white:
-            self.is_human_current = False
-            self.bot_player = bot.Bot(params.Color.black)
-            self.human_player = player.Player(color)
-        if color == params.Color.black:
-            self.human_player = player.Player(color)
-            self.bot_player = bot.Bot(params.Color.white)
+        if self.enemy_type == const.GameMode.with_human:
+            self.white_player = player.HumanPlayer(const.Color.white)
+            self.black_player = player.HumanPlayer(const.Color.black)
+            return None
+        if color == const.Color.white:
+            self.black_player = bot_player.Bot(const.Color.black, PlayerEntity.bot)
+            self.white_player = player.HumanPlayer(color)
+        if color == const.Color.black:
+            self.black_player = player.HumanPlayer(color)
+            self.white_player = bot_player.Bot(const.Color.white, PlayerEntity.bot)
 
     def check_winner(self, x, y, color):
-        directions = self.board.check_around(x, y, color)
-        for direction in directions:
-            second_dir = self.board.find_second_dir(direction, directions)
-            self.winner = self.board.find_line(x, y, color, direction, second_dir)
-            if self.winner is not None:
-                break
+        for direction in const.directions:
+            length = self.board.find_line(x, y, direction, color, 1)
+            if length >= self.board.length_to_win:
+                self.winner = color
 
     def make_turn(self, x, y):
         if self.board.map[x][y] == 0:
-            self.human_player.make_move(self.board, x, y)
-            self.is_human_current = not self.is_human_current
-            self.check_winner(x, y, self.human_player.color)
-
-    def bot_make_turn(self):
-        x, y = self.bot_player.make_move(self.board)
-        self.is_human_current = not self.is_human_current
-        self.check_winner(x, y, self.bot_player.color)
-
-    def turns(self, x, y):
-        if self.is_human_current:
-            self.make_turn(x, y)
-        else:
-            self.bot_make_turn()
-
-    def change_stage(self, stage):
-        self.game_stage = stage
+            self.board.put_stone(x, y, self.current_player.color)
+            self.check_winner(x, y, self.current_player.color)
+            self.is_black_current = not self.is_black_current

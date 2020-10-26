@@ -1,5 +1,6 @@
 from game.game import Game
 from game import params as gp
+from game import const as c
 from view import params as p
 from view import button as b
 from view.click_handler import ClickHandler
@@ -11,7 +12,7 @@ pygame.init()
 
 class MainWindow:
     def __init__(self):
-        self.game = Game(gp.board_width, gp.board_height, gp.length_to_win)
+        self.game = Game(gp.board_width, gp.board_height, gp.length_to_win, gp.type_of_enemy)
         self.display = pygame.display.set_mode((p.screen_width, p.screen_height))
         self.display.fill(p.menu_color)
         self.clock = pygame.time.Clock()
@@ -20,13 +21,13 @@ class MainWindow:
     def open_start_menu(self):
         start_button = b.Button(100, 65, p.board_color)
         start_button.draw(self.display, p.screen_width // 2.5, p.screen_height // 2)
+        self.clock.tick(15)
         launching = True
         while launching:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     launching = False
             pygame.display.update()
-            self.clock.tick(30)
 
     def open_settings_menu(self):
         self.display.fill(p.menu_color)
@@ -41,42 +42,44 @@ class MainWindow:
                     choice = False
             if black_button.is_pressed:
                 choice = False
-                self.game_on_board(gp.Color.black)
+                self.game_on_board(c.Color.black)
             if white_button.is_pressed:
                 choice = False
-                self.game_on_board(gp.Color.white)
+                self.game_on_board(c.Color.white)
             pygame.display.update()
 
     def game_on_board(self, color):
         self.display.blit(p.board_back, (0, 0))
-        self.game.change_stage(gp.GameStage.game_on_board)
         self.game.prepare_players(color)
-        pygame.time.wait(150)
+        pygame.time.wait(200)
         click_handler = ClickHandler()
-        if color == gp.Color.white:
-            self.game.bot_make_turn()
         cycle = True
+        self.clock.tick(20)
         while cycle:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     cycle = False
             click_pos = pygame.mouse.get_pos()
             click = pygame.mouse.get_pressed()
-            if click_handler.check_click(click_pos, click):
-                if click_handler.handle() is not None:
-                    x, y = click_handler.handle()
-                else:
-                    continue
-                self.game.turns(x, y)
-                if self.game.winner is not None:
-                    pygame.time.wait(150)
-                    cycle = False
-                    self.end_game()
+            current_player = self.game.current_player
+            if current_player.entity == c.PlayerEntity.human:
+                if click_handler.check_click(click_pos, click):
+                    if click_handler.handle() is not None:
+                        x, y = click_handler.handle()
+                        self.game.make_turn(x,y)
+                    else:
+                        continue
+            else:
+                x, y = current_player.make_move(self.game.board)
+                self.game.make_turn(x, y)
+            if self.game.winner is not None:
+                pygame.time.wait(150)
+                cycle = False
+                self.end_game()
             self.update_map()
             pygame.display.update()
 
     def end_game(self):
-        self.game.change_stage(gp.GameStage.end_game)
         self.display.fill(p.board_color)
         again_button = b.Button(120, 70, p.blue_color)
         quit_button = b.Button(120, 70, p.red_color)
@@ -104,7 +107,7 @@ class MainWindow:
 
     def draw_stone(self, color, pos):
         circle_color = p.black_color if \
-            gp.Color.black.value == color \
+            c.Color.black.value == color \
             else p.white_color
         pygame.draw.circle(self.display,
                            circle_color,

@@ -3,3 +3,4 @@ venv
 */__pycache__
 view/stone.py
 game/point.py
+.coverage

@@ -1,6 +1,5 @@
 import pygame
 import os
-import resources
 
 pygame.init()
 

@@ -1,9 +1,17 @@
-from game.point import Point
+import abc
+from game.const import PlayerEntity
 
 
-class Player:
-    def __init__(self, color):
+class Player(abc.ABC):
+    def __init__(self, color, entity=PlayerEntity.human):
         self.color = color
+        self.entity = entity
 
-    def make_move(self, board, x, y):
-        board.map[x][y] = self.color.value
+    @abc.abstractmethod
+    def make_move(self, board):
+        pass
+
+
+class HumanPlayer(Player):
+    def make_move(self, board):
+        return None
