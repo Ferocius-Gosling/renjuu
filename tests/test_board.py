@@ -1,6 +1,6 @@
 import pytest
-from game import board as b
-from game.const import Color, directions
+from renjuu.game import board as b
+from renjuu.game.const import Color, directions
 
 
 @pytest.fixture()

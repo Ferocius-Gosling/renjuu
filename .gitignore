@@ -1,6 +1,6 @@
 venv
 .idea
 */__pycache__
-view/stone.py
-game/point.py
+renjuu/view/stone.py
+renjuu/game/point.py
 .coverage

@@ -1,8 +1,7 @@
-import pytest
-from game.const import Color
-from game import board as b
-from game.player import PlayerEntity, HumanPlayer
-from game.bot_player import Bot
+from renjuu.game.const import Color
+from renjuu.game import board as b
+from renjuu.game.player import PlayerEntity, HumanPlayer
+from renjuu.game.bot_player import Bot
 
 
 def test_player_create():

@@ -1,10 +1,8 @@
-from game.game import Game
-from game import params as gp
-from game import const as c
-from view import params as p
-from view import button as b
-from view.click_handler import ClickHandler
-from view.utils import get_coordinates
+from renjuu.game.game import Game
+from renjuu.game import params as gp, const as c
+from renjuu.view import params as p, button as b
+from renjuu.view.click_handler import ClickHandler
+from renjuu.view.utils import get_coordinates
 import pygame
 
 pygame.init()

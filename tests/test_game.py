@@ -1,7 +1,7 @@
 import unittest
 import pytest
-from game import game as g
-from game.const import Color, GameMode, PlayerEntity
+from renjuu.game import game as g
+from renjuu.game.const import Color, GameMode, PlayerEntity
 
 
 @pytest.fixture()
@@ -23,9 +23,10 @@ def test_game_init_with_human():
     assert game.black_player.entity == PlayerEntity.human
     assert game.white_player.entity == PlayerEntity.human
 
+
 @pytest.mark.parametrize("test_input, expected",
                          [(Color.black, (PlayerEntity.human, PlayerEntity.bot)),
-                          (Color.white, (PlayerEntity.bot, PlayerEntity.human))])
+                         (Color.white, (PlayerEntity.bot, PlayerEntity.human))])
 def test_prepare_players(game, test_input, expected):
     game.prepare_players(test_input)
     assert game.black_player.entity == expected[0]
@@ -112,7 +113,7 @@ def test_restart_game(game):
     game.restart()
     assert game.winner is None
     assert game.is_black_current
-    assert game.human_player is None
+    assert game.black_player is None
 
 
 if __name__ == '__main__':

@@ -1,5 +1,5 @@
-from game import board, player, bot_player, const
-from game.const import PlayerEntity
+from renjuu.game import bot_player, board, const, player
+from renjuu.game.const import PlayerEntity
 
 
 class Game:

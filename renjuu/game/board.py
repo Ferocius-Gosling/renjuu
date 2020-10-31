@@ -1,4 +1,4 @@
-from game.const import Color
+from renjuu.game.const import Color
 
 
 class Board:

@@ -1,5 +1,5 @@
 import abc
-from game.const import PlayerEntity
+from renjuu.game.const import PlayerEntity
 
 
 class Player(abc.ABC):

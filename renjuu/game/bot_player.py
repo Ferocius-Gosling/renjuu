@@ -1,5 +1,5 @@
 import random
-from game.player import Player
+from renjuu.game.player import Player
 
 
 class Bot(Player):
