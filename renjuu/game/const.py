@@ -1,6 +1,9 @@
 from enum import Enum
+from renjuu.game.vector import Vector
 
-directions = [(1, 0), (0, 1), (1, -1), (1, 1)]
+
+directions = [Vector([1, 0]), Vector([0, 1]),
+              Vector([1, -1]), Vector([1, 1])]
 
 
 class GameMode(Enum):

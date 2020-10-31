@@ -1,5 +1,6 @@
 from renjuu.game.game import Game
 from renjuu.game import params as gp, const as c
+from renjuu.game.vector import Vector
 from renjuu.view import params as p, button as b
 from renjuu.view.click_handler import ClickHandler
 from renjuu.view.utils import get_coordinates
@@ -12,7 +13,6 @@ class MainWindow:
         self.display = pygame.display.set_mode((p.screen_width, p.screen_height))
         self.display.fill(p.menu_color)
         self.clock = pygame.time.Clock()
-        self.points = []
 
     def open_start_menu(self):
         start_button = b.Button(100, 65, p.board_color)
@@ -62,12 +62,12 @@ class MainWindow:
                 if click_handler.check_click(click_pos, click):
                     if click_handler.handle() is not None:
                         x, y = click_handler.handle()
-                        self.game.make_turn(x,y)
+                        self.game.make_turn(Vector([x, y]))
                     else:
                         continue
             else:
                 x, y = current_player.make_move(self.game.board)
-                self.game.make_turn(x, y)
+                self.game.make_turn(Vector([x, y]))
             if self.game.winner is not None:
                 pygame.time.wait(150)
                 cycle = False
@@ -97,15 +97,12 @@ class MainWindow:
     def update_map(self):
         for i in range(self.game.board.width):
             for j in range(self.game.board.height):
-                if self.game.board.map[i][j] != 0:
+                if self.game.board.map[i][j] != c.Color.non:
                     self.draw_stone(self.game.board.map[i][j],
                                     get_coordinates(i, j))
 
     def draw_stone(self, color, pos):
         circle_color = p.black_color if \
-            c.Color.black.value == color \
+            c.Color.black == color \
             else p.white_color
-        pygame.draw.circle(self.display,
-                           circle_color,
-                           pos,
-                           10)
+        pygame.draw.circle(self.display, circle_color, pos, 10)

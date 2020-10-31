@@ -1,5 +1,6 @@
 from renjuu.game import bot_player, board, const, player
-from renjuu.game.const import PlayerEntity
+from renjuu.game.const import PlayerEntity, Color
+from renjuu.game.vector import Vector
 
 
 class Game:
@@ -29,24 +30,24 @@ class Game:
 
     def prepare_players(self, color):
         if self.enemy_type == const.GameMode.with_human:
-            self.white_player = player.HumanPlayer(const.Color.white)
-            self.black_player = player.HumanPlayer(const.Color.black)
+            self.white_player = player.HumanPlayer(Color.white)
+            self.black_player = player.HumanPlayer(Color.black)
             return None
-        if color == const.Color.white:
-            self.black_player = bot_player.Bot(const.Color.black, PlayerEntity.bot)
+        if color == Color.white:
+            self.black_player = bot_player.Bot(Color.black, PlayerEntity.bot)
             self.white_player = player.HumanPlayer(color)
-        if color == const.Color.black:
+        if color == Color.black:
             self.black_player = player.HumanPlayer(color)
-            self.white_player = bot_player.Bot(const.Color.white, PlayerEntity.bot)
+            self.white_player = bot_player.Bot(Color.white, PlayerEntity.bot)
 
-    def check_winner(self, x, y, color):
+    def check_winner(self, v, color):
         for direction in const.directions:
-            length = self.board.find_line(x, y, direction, color, 1)
+            length = self.board.find_line(v, direction, color, 1)
             if length >= self.board.length_to_win:
                 self.winner = color
 
-    def make_turn(self, x, y):
-        if self.board.map[x][y] == 0:
-            self.board.put_stone(x, y, self.current_player.color)
-            self.check_winner(x, y, self.current_player.color)
+    def make_turn(self, v):
+        if self.board[v] == Color.non:
+            self.board.put_stone(v, self.current_player.color)
+            self.check_winner(v, self.current_player.color)
             self.is_black_current = not self.is_black_current

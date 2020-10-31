@@ -9,43 +9,39 @@ class Board:
         self.map = self.prepare_map()
 
     def __getitem__(self, item):
-        return self.map[item]
+        return self.map[item.x][item.y]
 
     def __setitem__(self, key, value):
-        self.map[key] = value
+        self.map[key.x][key.y] = value
 
     def prepare_map(self):
-        return [[Color.non.value] * self.height for i in range(self.width)]
+        return [[Color.non] * self.height for i in range(self.width)]
 
-    def put_stone(self, x, y, color):
-        self[x][y] = color.value
+    def put_stone(self, v, color):
+        self[v] = color
 
-    def get_condition(self, x, y):
-        condition = x < 0 or \
-                y < 0 or \
-                y >= self.height or \
-                x >= self.width
+    def get_condition(self, v):
+        condition = v.x < 0 or \
+                v.y < 0 or \
+                v.y >= self.height or \
+                v.x >= self.width
         return condition
 
-    def find_line(self, x, y, direction, color, length):
-        dir_x_first = direction[0]
-        dir_y_first = direction[1]
-        dir_x_second = -direction[0]
-        dir_y_second = -direction[1]
-        inverse_dir = (-direction[0],-direction[1])
-        while not self.get_condition(x + dir_x_first, y + dir_y_first) and \
-                self[x + dir_x_first][y + dir_y_first] == color.value:
-            length, dir_x_first, dir_y_first = self._increment_coordinates(
-                length, dir_x_first, dir_y_first, direction)
-        while not self.get_condition(x + dir_x_second, y + dir_y_second) and \
-                self[x + dir_x_second][y + dir_y_second] == color.value:
-            length, dir_x_second, dir_y_second = self._increment_coordinates(
-                length, dir_x_second, dir_y_second, inverse_dir)
+    def find_line(self, v, direction, color, length):
+        dir_first = direction
+        dir_second = -direction
+        while not self.get_condition(v + dir_first) and \
+                self[v + dir_first] == color:
+            length, dir_first = self._increment_coordinates(
+                length, dir_first, direction)
+        while not self.get_condition(v + dir_second) and \
+                self[v + dir_second] == color:
+            length, dir_second = self._increment_coordinates(
+                length, dir_second, -direction)
         return length
 
     @staticmethod
-    def _increment_coordinates(length, x, y, direction):
+    def _increment_coordinates(length, v, direction):
         length += 1
-        x += direction[0]
-        y += direction[1]
-        return length, x, y
+        v += direction
+        return length, v
