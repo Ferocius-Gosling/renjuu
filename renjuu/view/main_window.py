@@ -5,8 +5,6 @@ from renjuu.view.click_handler import ClickHandler
 from renjuu.view.utils import get_coordinates
 import pygame
 
-pygame.init()
-
 
 class MainWindow:
     def __init__(self):

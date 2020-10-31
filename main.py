@@ -15,7 +15,6 @@ if __name__ == '__main__':
         params.type_of_enemy = GameMode.with_human
     else:
         params.type_of_enemy = GameMode.with_bot
-    pygame.init()
 
     window = main_window.MainWindow()
     window.open_settings_menu()

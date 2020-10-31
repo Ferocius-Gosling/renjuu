@@ -1,7 +1,5 @@
 import pygame
 
-pygame.init()
-
 
 class Button:
     def __init__(self, width, height, color):
@@ -23,4 +21,3 @@ class Button:
                 self.is_pressed = True
                 if action is not None:
                     action()
-        #print_text(message)
