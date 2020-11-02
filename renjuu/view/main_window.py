@@ -1,15 +1,17 @@
 from renjuu.game.game import Game
 from renjuu.game import params as gp, const as c
+from renjuu.game.player import HumanPlayer
+from renjuu.game.bot_player import Bot
 from renjuu.game.vector import Vector
 from renjuu.view import params as p, button as b
 from renjuu.view.click_handler import ClickHandler
-from renjuu.view.utils import get_coordinates
+from renjuu.view.utils import get_coordinates, info_inc, info_dec
 import pygame
 
 
 class MainWindow:
     def __init__(self):
-        self.game = Game(gp.board_width, gp.board_height, gp.length_to_win, gp.type_of_enemy)
+        self.game = None
         self.display = pygame.display.set_mode((p.screen_width, p.screen_height))
         self.display.fill(p.menu_color)
         self.clock = pygame.time.Clock()
@@ -27,26 +29,50 @@ class MainWindow:
 
     def open_settings_menu(self):
         self.display.fill(p.menu_color)
-        black_button = b.Button(120, 70, p.black_color)
-        white_button = b.Button(120, 70, p.white_color)
+        # black_button = b.Button(120, 70, p.black_color)
+        # white_button = b.Button(120, 70, p.white_color)
+        buttons = []
+        start_button = b.Button(120, 70, p.black_color)
+        player_counter_button = b.Button(120, 70, p.menu_color, info="2")
+        inc_button = b.Button(50, 70, p.white_color)
+        dec_button = b.Button(50, 70, p.white_color)
+        switches = []
+        i = 1
+        for color in p.colors:
+            buttons.append(b.SwitchButton(50, 50, [color, p.menu_color],
+                                          [None, None], [c.Color(i), c.Color(i)]))
+            i += 1
+        for i in range(8):
+            switches.append(b.SwitchButton(100, 50,
+                                           [p.menu_color, p.menu_color],
+                                           ["Human", "Bot"],
+                                           [HumanPlayer(buttons[i].current_item),
+                                            Bot(buttons[i].current_item,
+                                                c.PlayerEntity.bot)]))
         choice = True
         while choice:
-            black_button.draw(self.display, 230, 300, action=None)
-            white_button.draw(self.display, 470, 300, action=None)
+            self.draw_button(75, 50, player_counter_button, buttons)
+            self.draw_button(140, 50, player_counter_button, switches)
+            player_counter_button.draw(self.display, 300, 100)
+            inc_button.draw(self.display, 240, 100, player_counter_button, action=info_inc)
+            dec_button.draw(self.display, 400, 100, player_counter_button, action=info_dec)
+            # black_button.draw(self.display, 230, 300, action=None)
+            # white_button.draw(self.display, 470, 300, action=None)
+            start_button.draw(self.display, 570, 300)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     choice = False
-            if black_button.is_pressed:
+            if start_button.is_pressed:
                 choice = False
-                self.game_on_board(c.Color.black)
-            if white_button.is_pressed:
-                choice = False
-                self.game_on_board(c.Color.white)
+                self.game_on_board(self.collect_players(int(player_counter_button.info), switches))
+            # if white_button.is_pressed:
+            #     choice = False
+            #     self.game_on_board(c.Color.white)
             pygame.display.update()
 
-    def game_on_board(self, color):
+    def game_on_board(self, players):
+        self.game = Game(gp.board_width, gp.board_height, gp.length_to_win, gp.type_of_enemy, players)
         self.display.blit(p.board_back, (0, 0))
-        self.game.prepare_players(color)
         pygame.time.wait(200)
         click_handler = ClickHandler()
         cycle = True
@@ -102,7 +128,23 @@ class MainWindow:
                                     get_coordinates(i, j))
 
     def draw_stone(self, color, pos):
-        circle_color = p.black_color if \
-            c.Color.black == color \
-            else p.white_color
+        circle_color = p.check_color[color]
         pygame.draw.circle(self.display, circle_color, pos, 10)
+
+    def draw_button(self, x, y, counter, buttons):
+        i = 0
+        for button in buttons:
+            if i < int(counter.info):
+                button.draw(self.display, x, y + i * 65)
+            else:
+                b.hide(button, self.display, x, y + i * 65)
+            i += 1
+
+    def collect_players(self, counter, switches):
+        i = 1
+        players = []
+        for switch in switches:
+            if i <= counter:
+                i += 1
+                players.append(switch.current_item)
+        return players
