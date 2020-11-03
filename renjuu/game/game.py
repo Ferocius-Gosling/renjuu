@@ -4,9 +4,8 @@ from renjuu.game.vector import Vector
 
 
 class Game:
-    def __init__(self, width, height, length, enemy_type, players):
+    def __init__(self, width, height, length, players):
         self.board = board.Board(width, height, length)
-        self.enemy_type = enemy_type
         self.players = sorted(players, key=lambda player: player.color)
         assert players
         self._player_order = iter(self.players)

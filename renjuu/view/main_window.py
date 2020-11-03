@@ -29,8 +29,6 @@ class MainWindow:
 
     def open_settings_menu(self):
         self.display.fill(p.menu_color)
-        # black_button = b.Button(120, 70, p.black_color)
-        # white_button = b.Button(120, 70, p.white_color)
         buttons = []
         start_button = b.Button(120, 70, p.black_color)
         player_counter_button = b.Button(120, 70, p.menu_color, info="2")
@@ -56,8 +54,6 @@ class MainWindow:
             player_counter_button.draw(self.display, 300, 100)
             inc_button.draw(self.display, 240, 100, player_counter_button, action=info_inc)
             dec_button.draw(self.display, 400, 100, player_counter_button, action=info_dec)
-            # black_button.draw(self.display, 230, 300, action=None)
-            # white_button.draw(self.display, 470, 300, action=None)
             start_button.draw(self.display, 570, 300)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -65,13 +61,10 @@ class MainWindow:
             if start_button.is_pressed:
                 choice = False
                 self.game_on_board(self.collect_players(int(player_counter_button.info), switches))
-            # if white_button.is_pressed:
-            #     choice = False
-            #     self.game_on_board(c.Color.white)
             pygame.display.update()
 
     def game_on_board(self, players):
-        self.game = Game(gp.board_width, gp.board_height, gp.length_to_win, gp.type_of_enemy, players)
+        self.game = Game(gp.board_width, gp.board_height, gp.length_to_win, players)
         self.display.blit(p.board_back, (0, 0))
         pygame.time.wait(200)
         click_handler = ClickHandler()

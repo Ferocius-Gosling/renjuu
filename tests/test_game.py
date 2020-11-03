@@ -2,13 +2,18 @@ import unittest
 import pytest
 from renjuu.game import game as g
 from renjuu.game.const import Color, GameMode, PlayerEntity
+from renjuu.game.player import HumanPlayer
 from renjuu.game.vector import Vector
 
 
 @pytest.fixture()
-def game():
-    game = g.Game(5, 5, 3, GameMode.with_bot)
-    game.prepare_players(Color.black)
+def two_human_players():
+    return [HumanPlayer(Color.black), HumanPlayer(Color.black)]
+
+
+@pytest.fixture()
+def game(two_human_players):
+    game = g.Game(5, 5, 3, two_human_players)
     return game
 
 
