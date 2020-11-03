@@ -1,14 +1,20 @@
 import unittest
 import pytest
 from renjuu.game import game as g
-from renjuu.game.const import Color, GameMode, PlayerEntity
-from renjuu.game.player import HumanPlayer
+from renjuu.game.bot_player import Bot
+from renjuu.game.const import Color, PlayerEntity
+from renjuu.game.player import HumanPlayer, Player
 from renjuu.game.vector import Vector
 
 
 @pytest.fixture()
 def two_human_players():
-    return [HumanPlayer(Color.black), HumanPlayer(Color.black)]
+    return [HumanPlayer(Color.black), HumanPlayer(Color.white)]
+
+
+@pytest.fixture()
+def bot_and_human_players():
+    return [HumanPlayer(Color.black), Bot(Color.white, PlayerEntity.bot)]
 
 
 @pytest.fixture()
@@ -19,25 +25,27 @@ def game(two_human_players):
 
 def test_game_init(game):
     assert game.board.length_to_win == 3
-    assert game.black_player is not None
+    assert game.players is not None
     assert game.winner is None
 
 
-def test_game_init_with_human():
-    game = g.Game(5, 5, 3, GameMode.with_human)
-    game.prepare_players(Color.black)
-    assert game.black_player.entity == PlayerEntity.human
-    assert game.white_player.entity == PlayerEntity.human
+def test_game_init_with_human(two_human_players):
+    game = g.Game(5, 5, 3, two_human_players)
+    assert game.players[0].color == Color.black
+    assert game.players[1].color == Color.white
 
 
 @pytest.mark.parametrize("test_input, expected",
-                         [(Color.black, (PlayerEntity.human, PlayerEntity.bot)),
-                         (Color.white, (PlayerEntity.bot, PlayerEntity.human))])
-def test_prepare_players(game, test_input, expected):
-    game.prepare_players(test_input)
-    assert game.black_player.entity == expected[0]
-    assert game.white_player.entity == expected[1]
-    assert game.is_black_current
+            [([HumanPlayer(Color.red), HumanPlayer(Color.white), HumanPlayer(Color.black)],
+            [Color.black, Color.white, Color.red]),
+            ([HumanPlayer(Color.gray), HumanPlayer(Color.green), HumanPlayer(Color.yellow)],
+            [Color.yellow, Color.green, Color.gray]),])
+def test_sorted_players(test_input, expected):
+    game = g.Game(5, 5, 3, test_input)
+    assert game.players[0].color == expected[0]
+    assert game.players[1].color == expected[1]
+    assert game.players[2].color == expected[2]
+    assert game.current_player.color == expected[0]
 
 
 @pytest.mark.parametrize("c1, c2, c3, expected", [([0, 0], [0, 1], [0, 2], 3),
@@ -65,34 +73,35 @@ def test_game_cycle(game):
     assert game.winner == Color.black
 
 
-def test_game_cycle_with_bot(game):
+def test_game_cycle_with_bot(bot_and_human_players):
+    game = g.Game(5, 5, 3, bot_and_human_players)
     game.make_turn(Vector([0, 0]))
-    game.make_turn(Vector(game.white_player.make_move(game.board)))
+    game.make_turn(Vector(game.current_player.make_move(game.board)))
     if game.board.map[0][1] == Color.non:
         game.make_turn(Vector([0, 1]))
     else:
         game.make_turn(Vector([1, 0]))
-        game.make_turn(Vector(game.white_player.make_move(game.board)))
+        game.make_turn(Vector(game.current_player.make_move(game.board)))
         if game.board.map[2][0] == Color.non:
             game.make_turn(Vector([2, 0]))
         else:
             game.make_turn(Vector([1, 1]))
-            game.make_turn(Vector(*game.white_player.make_move(game.board)))
+            game.make_turn(Vector(game.current_player.make_move(game.board)))
             if game.board.map[2][2] == Color.non:
                 game.make_turn(Vector([2, 2]))
             else:
                 game.make_turn(Vector([2, 1]))
-    game.make_turn(Vector(game.white_player.make_move(game.board)))
+    game.make_turn(Vector(game.current_player.make_move(game.board)))
     if game.board.map[0][2] == Color.non:
         game.make_turn(Vector([0, 2]))
     elif game.board.map[1][0] == Color.non:
         game.make_turn(Vector([1, 0]))
-        game.make_turn(Vector(game.white_player.make_move(game.board)))
+        game.make_turn(Vector(game.current_player.make_move(game.board)))
         if game.board.map[2][0] == Color.non:
             game.make_turn(Vector([2, 0]))
         elif game.board.map[1][1] == Color.non:
             game.make_turn(Vector([1, 1]))
-            game.make_turn(Vector(game.white_player.make_move(game.board)))
+            game.make_turn(Vector(game.current_player.make_move(game.board)))
             if game.board.map[1][2] == Color.non:
                 game.make_turn(Vector([1, 2]))
             elif game.board.map[2][1] == Color.non:
@@ -107,7 +116,7 @@ def test_game_cycle_with_bot(game):
             return
     else:
         game.make_turn(Vector([1, 1]))
-        game.make_turn(Vector(game.white_player.make_move(game.board)))
+        game.make_turn(Vector(game.current_player.make_move(game.board)))
         if game.board.map[2][2] == Color.non:
             game.make_turn(Vector([2, 2]))
         else:
@@ -118,8 +127,7 @@ def test_game_cycle_with_bot(game):
 def test_restart_game(game):
     game.restart()
     assert game.winner is None
-    assert game.is_black_current
-    assert game.black_player is None
+    assert game.board[0, 0] == Color.non
 
 
 if __name__ == '__main__':

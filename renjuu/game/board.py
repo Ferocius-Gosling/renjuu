@@ -9,7 +9,7 @@ class Board:
         self.map = self.prepare_map()
 
     def __getitem__(self, item):
-        return self.map[item.x][item.y]
+        return self.map[item[0]][item[1]]
 
     def __setitem__(self, key, value):
         self.map[key.x][key.y] = value
