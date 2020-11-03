@@ -87,6 +87,10 @@ class MainWindow:
             else:
                 x, y = current_player.make_move(self.game.board)
                 self.game.make_turn(Vector([x, y]))
+            if pygame.key.get_pressed()[pygame.K_z]:
+                self.game.undo_turn()
+                pygame.time.wait(150)
+                self.clear()
             if self.game.winner is not None:
                 pygame.time.wait(150)
                 cycle = False
@@ -119,6 +123,9 @@ class MainWindow:
                 if self.game.board.map[i][j] != c.Color.non:
                     self.draw_stone(self.game.board.map[i][j],
                                     get_coordinates(i, j))
+
+    def clear(self):
+        self.display.blit(p.board_back, (0, 0))
 
     def draw_stone(self, color, pos):
         circle_color = p.check_color[color]

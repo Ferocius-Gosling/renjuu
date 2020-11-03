@@ -39,7 +39,7 @@ def test_game_init_with_human(two_human_players):
             [([HumanPlayer(Color.red), HumanPlayer(Color.white), HumanPlayer(Color.black)],
             [Color.black, Color.white, Color.red]),
             ([HumanPlayer(Color.gray), HumanPlayer(Color.green), HumanPlayer(Color.yellow)],
-            [Color.yellow, Color.green, Color.gray]),])
+            [Color.yellow, Color.green, Color.gray])])
 def test_sorted_players(test_input, expected):
     game = g.Game(5, 5, 3, test_input)
     assert game.players[0].color == expected[0]
@@ -72,6 +72,37 @@ def test_game_cycle(game):
     game.make_turn(Vector([0, 2]))
     assert game.winner == Color.black
 
+
+@pytest.mark.parametrize("players, expected",
+                    [([HumanPlayer(Color.white), HumanPlayer(Color.black)], Color.black),
+                     ([HumanPlayer(Color.black), HumanPlayer(Color.white), HumanPlayer(Color.red)],
+                     Color.red),
+                     ([HumanPlayer(Color.black), HumanPlayer(Color.white),
+                       Bot(Color.red, PlayerEntity.bot)], Color.white),
+                     ([HumanPlayer(Color.black), Bot(Color.white, PlayerEntity.bot),
+                       Bot(Color.red, PlayerEntity.bot)], Color.black),
+                     ([HumanPlayer(Color.black), Bot(Color.white, PlayerEntity.bot),
+                       HumanPlayer(Color.red)], Color.red),
+                     ([Bot(Color.black, PlayerEntity.bot), HumanPlayer(Color.white),
+                       HumanPlayer(Color.red, PlayerEntity.bot)], Color.white)
+                     ])
+def test_undo_moves(players, expected):
+    game = g.Game(5, 5, 3, players)
+    game.make_turn(Vector([0, 0]))
+    game.make_turn(Vector([0, 1]))
+    game.make_turn(Vector([0, 2]))
+    game.undo_turn()
+    assert game.current_player.color == expected
+    assert game.board[0, 2] == Color.non
+
+
+def test_undo_when_no_to_undo(game):
+    try:
+        game.undo_turn()
+    except IndexError:
+        assert False
+    finally:
+        assert True
 
 def test_game_cycle_with_bot(bot_and_human_players):
     game = g.Game(5, 5, 3, bot_and_human_players)
