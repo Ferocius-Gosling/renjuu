@@ -47,7 +47,6 @@ class Game:
             return
         diff_between_human, color = self._find_diff_between_humans(self.current_player.color)
         for i in range(diff_between_human):
-            print(self.moves[len(self.moves) - 1])
             self.board.put_stone(self.moves[len(self.moves) - 1], Color.non)
             self.moves.pop()
         while self.current_player.color != color:

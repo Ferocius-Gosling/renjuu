@@ -12,7 +12,7 @@ class Board:
         return self.map[item[0]][item[1]]
 
     def __setitem__(self, key, value):
-        self.map[key.x][key.y] = value
+        self.map[key[0]][key[1]] = value
 
     def prepare_map(self):
         return [[Color.non] * self.height for i in range(self.width)]
