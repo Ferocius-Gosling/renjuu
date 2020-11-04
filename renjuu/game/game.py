@@ -35,7 +35,6 @@ class Game:
             length = self.board.find_line(v, direction, color, 1)
             if length >= self.board.length_to_win:
                 self.winner = color
-                self.update_stat()
 
     def make_turn(self, v):
         if self.board[v] == Color.non:
