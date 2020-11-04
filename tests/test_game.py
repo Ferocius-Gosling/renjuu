@@ -104,6 +104,7 @@ def test_undo_when_no_to_undo(game):
     finally:
         assert True
 
+
 def test_game_cycle_with_bot(bot_and_human_players):
     game = g.Game(5, 5, 3, bot_and_human_players)
     game.make_turn(Vector([0, 0]))

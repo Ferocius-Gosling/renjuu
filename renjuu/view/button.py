@@ -78,6 +78,7 @@ class SwitchButton:
         if x < mouse[0] < x + self.width and y < mouse[1] < y + self.height:
             if click[0] == 1:
                 self.switch()
+                pygame.time.wait(50)
 
 
 def hide(button, display, x, y):
