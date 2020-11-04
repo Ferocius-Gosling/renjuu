@@ -1,3 +1,4 @@
+import os
 import unittest
 import pytest
 from renjuu.game import game as g
@@ -62,6 +63,18 @@ def test_check_winner(game, c1, c2, c3, expected):
     game.board.put_stone(Vector(c3), Color.black)
     game.check_winner(Vector(c3), Color.black)
     assert game.winner == Color.black
+
+
+def test_update_stat(game):
+    game.board.put_stone(Vector([0, 0]), Color.black)
+    game.board.put_stone(Vector([0, 1]), Color.black)
+    game.board.put_stone(Vector([0, 2]), Color.black)
+    game.check_winner(Vector([0, 2]), Color.black)
+    game.update_stat("test_update")
+    assert os.path.exists("test_update.json")
+    assert os.path.exists("test_update.txt")
+    os.remove("test_update.txt")
+    os.remove("test_update.json")
 
 
 def test_check_draw(two_human_players):

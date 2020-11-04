@@ -67,9 +67,9 @@ class Game:
                     last_id = player.color.value
         return abs(diff - last_id), Color(last_id)
 
-    def update_stat(self):
-        data = json_load("scores.json")
+    def update_stat(self, filename):
+        data = json_load(filename + ".json")
         stat_inc(data, self.winner, self.players)
         text = stat_constructor(data)
-        json_save("scores.json", data)
-        save("scores.txt", text)
+        json_save(filename + ".json", data)
+        save(filename + ".txt", text)

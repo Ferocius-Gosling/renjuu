@@ -94,7 +94,7 @@ class MainWindow:
             if self.game.winner is not None:
                 pygame.time.wait(150)
                 cycle = False
-                self.game.update_stat()
+                self.game.update_stat("scores")
                 self.end_game()
             self.update_map()
             pygame.display.update()
