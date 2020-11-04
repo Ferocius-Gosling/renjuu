@@ -11,6 +11,7 @@ class Game:
         self._player_order = iter(self.players)
         self.current_player = next(self._player_order)
         self.winner = None
+        self.max_count_moves = width * height
         self.moves = []
 
     def switch_players(self):
@@ -27,6 +28,8 @@ class Game:
         self.winner = None
 
     def check_winner(self, v, color):
+        if len(self.moves) == self.max_count_moves:
+            self.winner = Color.non
         for direction in const.directions:
             length = self.board.find_line(v, direction, color, 1)
             if length >= self.board.length_to_win:
