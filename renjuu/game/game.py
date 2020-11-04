@@ -1,6 +1,7 @@
 from renjuu.game import board, const
 from renjuu.game.const import PlayerEntity, Color
-from renjuu.game.vector import Vector
+from renjuu.managers.file_manager import json_load, json_save, save
+from renjuu.managers.stat_manager import stat_constructor, stat_inc
 
 
 class Game:
@@ -34,6 +35,7 @@ class Game:
             length = self.board.find_line(v, direction, color, 1)
             if length >= self.board.length_to_win:
                 self.winner = color
+                self.update_stat()
 
     def make_turn(self, v):
         if self.board[v] == Color.non:
@@ -65,3 +67,10 @@ class Game:
                 elif last_id < color.value - 1:
                     last_id = player.color.value
         return abs(diff - last_id), Color(last_id)
+
+    def update_stat(self):
+        data = json_load("scores.json")
+        stat_inc(data, self.winner, self.players)
+        text = stat_constructor(data)
+        json_save("scores.json", data)
+        save("scores.txt", text)
