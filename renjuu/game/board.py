@@ -27,7 +27,7 @@ class Board:
                 v.x >= self.width
         return condition
 
-    def find_line(self, v, direction, color, length):
+    def find_line(self, v, direction, color, length, fouls=None):
         dir_first = direction
         dir_second = -direction
         while not self.get_condition(v + dir_first) and \
@@ -38,6 +38,12 @@ class Board:
                 self[v + dir_second] == color:
             length, dir_second = self._increment_coordinates(
                 length, dir_second, -direction)
+        if fouls is not None and not self.get_condition(v + dir_first) \
+                and not self.get_condition(v + dir_second):
+            fouls['forks'].append(self[v + dir_first] == Color.non and
+                         self[v + dir_second] == Color.non)
+            if length > 5:
+                fouls['long'].append(True)
         return length
 
     @staticmethod

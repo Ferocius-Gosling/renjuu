@@ -34,6 +34,9 @@ class MainWindow:
         player_counter_button = b.Button(120, 70, p.menu_color, info="2")
         inc_button = b.Button(50, 70, p.white_color)
         dec_button = b.Button(50, 70, p.white_color)
+        foul_button = b.SwitchButton(120, 80, [p.menu_color, p.menu_color],
+                                     ["Without foul", "With foul"],
+                                     [False, True])
         switches = []
         i = 1
         for color in p.colors:
@@ -55,16 +58,18 @@ class MainWindow:
             inc_button.draw(self.display, 240, 100, player_counter_button, action=info_inc)
             dec_button.draw(self.display, 400, 100, player_counter_button, action=info_dec)
             start_button.draw(self.display, 570, 300)
+            foul_button.draw(self.display, 300, 200)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     choice = False
             if start_button.is_pressed:
                 choice = False
-                self.game_on_board(self.collect_players(int(player_counter_button.info), switches))
+                self.game_on_board(self.collect_players(int(player_counter_button.info),
+                                                        switches), foul_button.current_item)
             pygame.display.update()
 
-    def game_on_board(self, players):
-        self.game = Game(gp.board_width, gp.board_height, gp.length_to_win, players)
+    def game_on_board(self, players, with_foul):
+        self.game = Game(gp.board_width, gp.board_height, gp.length_to_win, players, with_foul)
         self.display.blit(p.board_back, (0, 0))
         pygame.time.wait(200)
         click_handler = ClickHandler()

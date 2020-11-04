@@ -5,8 +5,9 @@ from renjuu.managers.stat_manager import stat_constructor, stat_inc
 
 
 class Game:
-    def __init__(self, width, height, length, players):
+    def __init__(self, width, height, length, players, foul_black):
         self.board = board.Board(width, height, length)
+        self.with_foul = foul_black
         self.players = sorted(players, key=lambda player: player.color)
         assert players
         self._player_order = iter(self.players)
@@ -38,10 +39,27 @@ class Game:
 
     def make_turn(self, v):
         if self.board[v] == Color.non:
-            self.board.put_stone(v, self.current_player.color)
-            self.moves.append(v)
-            self.check_winner(v, self.current_player.color)
-            self.switch_players()
+            if self.with_foul and self.current_player.color == Color.black\
+                    and self.check_foul_move(v):
+                return
+            else:
+                self.board.put_stone(v, self.current_player.color)
+                self.moves.append(v)
+                self.check_winner(v, self.current_player.color)
+                self.switch_players()
+
+    def check_foul_move(self, v):
+        lines = []
+        fouls = {'forks': [], 'long': []}
+        i = 0
+        for direction in const.directions:
+            length = self.board.find_line(v, direction,
+                                          Color.black,
+                                          1, fouls=fouls)
+            if (length == 3 or length == 4) and fouls['forks'][i]:
+                lines.append(length)
+            i += 1
+        return len(lines) >= 2 or fouls['long'].count(True) >= 1
 
     def undo_turn(self):
         if not self.moves:
