@@ -1,6 +1,3 @@
-from renjuu.game.board import Board
-from renjuu.game.bot_player import Bot
-from renjuu.game.const import Color
 from renjuu.game.vector import Vector
 import pytest
 

@@ -1,7 +1,7 @@
 from renjuu.game.game import Game
 from renjuu.game import params as gp, const as c
 from renjuu.game.player import HumanPlayer
-from renjuu.game.bot_player import Bot
+from renjuu.game.ai.bot_player import Bot
 from renjuu.game.vector import Vector
 from renjuu.view import params as p, button as b
 from renjuu.view.click_handler import ClickHandler
@@ -37,6 +37,9 @@ class MainWindow:
         foul_button = b.SwitchButton(120, 80, [p.menu_color, p.menu_color],
                                      ["Without foul", "With foul"],
                                      [False, True])
+        difficult_button = b.SwitchButton(120, 80, [p.menu_color, p.menu_color],
+                                          ['random bot', 'smart bot'],
+                                          [False, True])
         switches = []
         i = 1
         for color in p.colors:
@@ -59,17 +62,22 @@ class MainWindow:
             dec_button.draw(self.display, 400, 100, player_counter_button, action=info_dec)
             start_button.draw(self.display, 570, 300)
             foul_button.draw(self.display, 300, 200)
+            difficult_button.draw(self.display, 300, 300)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     choice = False
             if start_button.is_pressed:
                 choice = False
                 self.game_on_board(self.collect_players(int(player_counter_button.info),
-                                                        switches), foul_button.current_item)
+                                                        switches),
+                                   foul_button.current_item,
+                                   difficult_button.current_item)
             pygame.display.update()
 
-    def game_on_board(self, players, with_foul):
-        self.game = Game(gp.board_width, gp.board_height, gp.length_to_win, players, with_foul)
+    def game_on_board(self, players, with_foul, difficult):
+        self.game = Game(gp.board_width, gp.board_height, gp.length_to_win,
+                         players, with_foul, difficult)
+        gp.PLAYER_COUNT = len(self.game.players)
         self.display.blit(p.board_back, (0, 0))
         pygame.time.wait(200)
         click_handler = ClickHandler()
@@ -90,7 +98,7 @@ class MainWindow:
                     else:
                         continue
             else:
-                x, y = current_player.make_move(self.game.board)
+                x, y = current_player.make_move(self.game)
                 self.game.make_turn(Vector([x, y]))
             if pygame.key.get_pressed()[pygame.K_z]:
                 self.game.undo_turn()

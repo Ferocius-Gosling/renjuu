@@ -2,7 +2,7 @@ import os
 import unittest
 import pytest
 from renjuu.game import game as g
-from renjuu.game.bot_player import Bot
+from renjuu.game.ai.bot_player import Bot
 from renjuu.game.const import Color, PlayerEntity
 from renjuu.game.player import HumanPlayer
 from renjuu.game.vector import Vector

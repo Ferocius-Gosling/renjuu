@@ -1,0 +1,20 @@
+from renjuu.game.params import length_to_win
+
+
+ATTACK_WEIGHTS = [[0] * 3 for i in range(length_to_win + 1)]
+
+
+ATTACK_WEIGHTS[1][1] = 0.1
+ATTACK_WEIGHTS[2][1] = 2
+ATTACK_WEIGHTS[3][1] = 4
+ATTACK_WEIGHTS[4][1] = 6
+ATTACK_WEIGHTS[5][1] = 200
+
+ATTACK_WEIGHTS[1][2] = 0.25
+ATTACK_WEIGHTS[2][2] = 5
+ATTACK_WEIGHTS[3][2] = 7
+ATTACK_WEIGHTS[4][2] = 100
+ATTACK_WEIGHTS[5][2] = 200
+
+ATTACK_WEIGHTS[5][0] = 200
+

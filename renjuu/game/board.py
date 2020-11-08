@@ -41,7 +41,7 @@ class Board:
         if fouls is not None and not self.get_condition(v + dir_first) \
                 and not self.get_condition(v + dir_second):
             fouls['forks'].append(self[v + dir_first] == Color.non and
-                         self[v + dir_second] == Color.non)
+                                  self[v + dir_second] == Color.non)
             if length > 5:
                 fouls['long'].append(True)
         return length

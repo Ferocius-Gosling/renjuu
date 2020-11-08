@@ -6,7 +6,6 @@ directions = [Vector([1, 0]), Vector([0, 1]),
               Vector([1, -1]), Vector([1, 1])]
 
 
-
 class GameMode(Enum):
     with_bot = 0
     with_human = 1
@@ -30,3 +29,13 @@ class Color(Enum):
 
     def __lt__(self, other):
         return self.value < other.value
+
+    def next_color(self, max_color_value):
+        if self.value + 1 > max_color_value:
+            return Color.black
+        else:
+            return Color(self.value + 1)
+
+
+COLORS = [Color.black, Color.white, Color.red, Color.blue,
+          Color.yellow, Color.green, Color.pink, Color.gray]

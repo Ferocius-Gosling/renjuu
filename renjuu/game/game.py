@@ -5,9 +5,10 @@ from renjuu.managers.stat_manager import stat_constructor, stat_inc
 
 
 class Game:
-    def __init__(self, width, height, length, players, foul_black):
+    def __init__(self, width, height, length, players, foul_black, is_smart):
         self.board = board.Board(width, height, length)
         self.with_foul = foul_black
+        self.smart_bot = is_smart
         self.players = sorted(players, key=lambda player: player.color)
         assert players
         self._player_order = iter(self.players)
