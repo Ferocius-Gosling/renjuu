@@ -12,13 +12,15 @@ import pygame
 class MainWindow:
     def __init__(self):
         self.game = None
-        self.display = pygame.display.set_mode((p.screen_width, p.screen_height))
+        self.display = pygame.display.set_mode((p.screen_width,
+                                                p.screen_height))
         self.display.fill(p.menu_color)
         self.clock = pygame.time.Clock()
 
     def open_start_menu(self):
         start_button = b.Button(100, 65, p.board_color)
-        start_button.draw(self.display, p.screen_width // 2.5, p.screen_height // 2)
+        start_button.draw(self.display, p.screen_width // 2.5,
+                          p.screen_height // 2)
         self.clock.tick(15)
         launching = True
         while launching:
@@ -34,10 +36,12 @@ class MainWindow:
         player_counter_button = b.Button(120, 70, p.menu_color, info="2")
         inc_button = b.Button(50, 70, p.white_color)
         dec_button = b.Button(50, 70, p.white_color)
-        foul_button = b.SwitchButton(120, 80, [p.menu_color, p.menu_color],
+        foul_button = b.SwitchButton(120, 80,
+                                     [p.menu_color, p.menu_color],
                                      ["Without foul", "With foul"],
                                      [False, True])
-        difficult_button = b.SwitchButton(120, 80, [p.menu_color, p.menu_color],
+        difficult_button = b.SwitchButton(120, 80,
+                                          [p.menu_color, p.menu_color],
                                           ['random bot', 'smart bot'],
                                           [False, True])
         switches = []
@@ -50,7 +54,8 @@ class MainWindow:
             switches.append(b.SwitchButton(100, 50,
                                            [p.menu_color, p.menu_color],
                                            ["Human", "Bot"],
-                                           [HumanPlayer(buttons[i].current_item),
+                                           [HumanPlayer(
+                                               buttons[i].current_item),
                                             Bot(buttons[i].current_item,
                                                 c.PlayerEntity.bot)]))
         choice = True
@@ -58,8 +63,10 @@ class MainWindow:
             self.draw_button(75, 50, player_counter_button, buttons)
             self.draw_button(140, 50, player_counter_button, switches)
             player_counter_button.draw(self.display, 300, 100)
-            inc_button.draw(self.display, 240, 100, player_counter_button, action=info_inc)
-            dec_button.draw(self.display, 400, 100, player_counter_button, action=info_dec)
+            inc_button.draw(self.display, 240, 100, player_counter_button,
+                            action=info_inc)
+            dec_button.draw(self.display, 400, 100, player_counter_button,
+                            action=info_dec)
             start_button.draw(self.display, 570, 300)
             foul_button.draw(self.display, 300, 200)
             difficult_button.draw(self.display, 300, 300)
@@ -68,10 +75,10 @@ class MainWindow:
                     choice = False
             if start_button.is_pressed:
                 choice = False
-                self.game_on_board(self.collect_players(int(player_counter_button.info),
-                                                        switches),
-                                   foul_button.current_item,
-                                   difficult_button.current_item)
+                self.game_on_board(self.collect_players(
+                    int(player_counter_button.info), switches),
+                    foul_button.current_item,
+                    difficult_button.current_item)
             pygame.display.update()
 
     def game_on_board(self, players, with_foul, difficult):

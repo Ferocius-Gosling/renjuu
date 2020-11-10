@@ -65,7 +65,8 @@ class Game:
     def undo_turn(self):
         if not self.moves:
             return
-        diff_between_human, color = self._find_diff_between_humans(self.current_player.color)
+        diff_between_human, color = self._find_diff_between_humans(
+            self.current_player.color)
         for i in range(diff_between_human):
             self.board.put_stone(self.moves[len(self.moves) - 1], Color.non)
             self.moves.pop()

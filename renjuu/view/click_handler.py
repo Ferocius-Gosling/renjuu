@@ -10,9 +10,9 @@ class ClickHandler:
 
     def handle(self):
         if self.click_pos[0] < 150 \
-            or self.click_pos[1] < 55 \
-            or self.click_pos[0] > 610 \
-             or self.click_pos[1] > 510:
+                or self.click_pos[1] < 55 \
+                or self.click_pos[0] > 610 \
+                or self.click_pos[1] > 510:
             return None
         x_click = (self.click_pos[0] - 150) // 32
         y_click = (self.click_pos[1] - 55) // 32

@@ -89,7 +89,8 @@ def filter_lines(checker: LineChecker):
     result = []
     if checker.attack_place >= 5:
         for attack in checker.attacks:
-            if attack.capability and attack.potential or attack.capability >= 5:
+            if attack.capability and attack.potential\
+                    or attack.capability >= 5:
                 result.append(attack)
     checker.attacks = result
     return result

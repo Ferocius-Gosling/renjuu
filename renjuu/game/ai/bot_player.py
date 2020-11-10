@@ -1,4 +1,3 @@
-import dataclasses
 import random
 
 from renjuu.game.ai.checkers import count_weight
@@ -26,8 +25,6 @@ class Bot(Player):
                     if game.board[vector] != Color.non:
                         continue
                     weights_table[vector] = count_weight(game, vector)
-            v = list(weights_table.values())
-            k = list(weights_table.keys())
-            return k[v.index(max(v))]
-
-
+            values = list(weights_table.values())
+            keys = list(weights_table.keys())
+            return keys[values.index(max(values))]

@@ -1,5 +1,4 @@
 import pygame
-import abc
 from renjuu.view import params as p
 
 
@@ -31,7 +30,8 @@ class Button:
                 self.is_pressed = False
 
     def hide(self, display, x, y):
-        pygame.draw.rect(display, p.menu_color, (x, y, self.width, self.height))
+        pygame.draw.rect(display, p.menu_color,
+                         (x, y, self.width, self.height))
 
 
 class SwitchButton:
@@ -73,7 +73,8 @@ class SwitchButton:
         click = pygame.mouse.get_pressed()
         text_style = pygame.font.Font(None, 26)
         text = text_style.render(self.current_info, 1, p.black_color)
-        pygame.draw.rect(display, self.current_color, (x, y, self.width, self.height))
+        pygame.draw.rect(display, self.current_color,
+                         (x, y, self.width, self.height))
         display.blit(text, (x, y))
         if x < mouse[0] < x + self.width and y < mouse[1] < y + self.height:
             if click[0] == 1:
@@ -82,4 +83,5 @@ class SwitchButton:
 
 
 def hide(button, display, x, y):
-    pygame.draw.rect(display, p.menu_color, (x, y, button.width, button.height))
+    pygame.draw.rect(display, p.menu_color,
+                     (x, y, button.width, button.height))
