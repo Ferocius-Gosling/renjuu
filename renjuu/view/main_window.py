@@ -47,8 +47,10 @@ class MainWindow:
         switches = []
         i = 1
         for color in p.colors:
-            buttons.append(b.SwitchButton(50, 50, [color, p.menu_color],
-                                          [None, None], [c.Color(i), c.Color(i)]))
+            buttons.append(b.SwitchButton(50, 50,
+                                          [color, p.menu_color],
+                                          [None, None],
+                                          [c.Color(i), c.Color(i)]))
             i += 1
         for i in range(8):
             switches.append(b.SwitchButton(100, 50,
