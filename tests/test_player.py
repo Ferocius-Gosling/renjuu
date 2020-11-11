@@ -1,5 +1,5 @@
 from renjuu.game.const import Color
-from renjuu.game import board as b
+from renjuu.game import game as g
 from renjuu.game.player import PlayerEntity, HumanPlayer
 from renjuu.game.ai.bot_player import Bot
 
@@ -11,9 +11,10 @@ def test_player_create():
 
 
 def test_make_move_to():
-    board = b.Board(3, 3, 3)
-    human_player = HumanPlayer(Color.black)
-    bot_player = Bot(Color.white, PlayerEntity.bot)
-    x, y = bot_player.make_move(board)
-    assert human_player.make_move(board) is None
+    game = g.Game(3, 3, 3, [HumanPlayer(Color.black),
+                             Bot(Color.white, PlayerEntity.bot)])
+    human_player = game.players[0]
+    bot_player = game.players[1]
+    x, y = bot_player.make_move(game)
+    assert human_player.make_move(game) is None
     assert 0 <= x < 3 and 0 <= y < 3

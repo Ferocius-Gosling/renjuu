@@ -20,7 +20,7 @@ def bot_and_human_players():
 
 @pytest.fixture()
 def game(two_human_players):
-    game = g.Game(5, 5, 3, two_human_players, False)
+    game = g.Game(5, 5, 3, two_human_players)
     return game
 
 
@@ -31,7 +31,7 @@ def test_game_init(game):
 
 
 def test_game_init_with_human(two_human_players):
-    game = g.Game(5, 5, 3, two_human_players, False)
+    game = g.Game(5, 5, 3, two_human_players)
     assert game.players[0].color == Color.black
     assert game.players[1].color == Color.white
 
@@ -42,7 +42,7 @@ def test_game_init_with_human(two_human_players):
             ([HumanPlayer(Color.gray), HumanPlayer(Color.green), HumanPlayer(Color.yellow)],
             [Color.yellow, Color.green, Color.gray])])
 def test_sorted_players(test_input, expected):
-    game = g.Game(5, 5, 3, test_input, False)
+    game = g.Game(5, 5, 3, test_input)
     assert game.players[0].color == expected[0]
     assert game.players[1].color == expected[1]
     assert game.players[2].color == expected[2]
@@ -78,7 +78,7 @@ def test_update_stat(game):
 
 
 def test_check_draw(two_human_players):
-    game = g.Game(3, 3, 4, two_human_players, False)
+    game = g.Game(3, 3, 4, two_human_players)
     for i in range(game.board.width):
         for j in range(game.board.height):
             game.make_turn(Vector([i, j]))
@@ -108,7 +108,7 @@ def test_game_cycle(game):
                        HumanPlayer(Color.red, PlayerEntity.bot)], Color.white)
                      ])
 def test_undo_moves(players, expected):
-    game = g.Game(5, 5, 3, players, False)
+    game = g.Game(5, 5, 3, players)
     game.make_turn(Vector([0, 0]))
     game.make_turn(Vector([0, 1]))
     game.make_turn(Vector([0, 2]))
@@ -157,34 +157,34 @@ def test_check_fouls_long(two_human_players):
 
 
 def test_game_cycle_with_bot(bot_and_human_players):
-    game = g.Game(5, 5, 3, bot_and_human_players, False)
+    game = g.Game(5, 5, 3, bot_and_human_players)
     game.make_turn(Vector([0, 0]))
-    game.make_turn(Vector(game.current_player.make_move(game.board)))
+    game.make_turn(Vector(game.current_player.make_move(game)))
     if game.board.map[0][1] == Color.non:
         game.make_turn(Vector([0, 1]))
     else:
         game.make_turn(Vector([1, 0]))
-        game.make_turn(Vector(game.current_player.make_move(game.board)))
+        game.make_turn(Vector(game.current_player.make_move(game)))
         if game.board.map[2][0] == Color.non:
             game.make_turn(Vector([2, 0]))
         else:
             game.make_turn(Vector([1, 1]))
-            game.make_turn(Vector(game.current_player.make_move(game.board)))
+            game.make_turn(Vector(game.current_player.make_move(game)))
             if game.board.map[2][2] == Color.non:
                 game.make_turn(Vector([2, 2]))
             else:
                 game.make_turn(Vector([2, 1]))
-    game.make_turn(Vector(game.current_player.make_move(game.board)))
+    game.make_turn(Vector(game.current_player.make_move(game)))
     if game.board.map[0][2] == Color.non:
         game.make_turn(Vector([0, 2]))
     elif game.board.map[1][0] == Color.non:
         game.make_turn(Vector([1, 0]))
-        game.make_turn(Vector(game.current_player.make_move(game.board)))
+        game.make_turn(Vector(game.current_player.make_move(game)))
         if game.board.map[2][0] == Color.non:
             game.make_turn(Vector([2, 0]))
         elif game.board.map[1][1] == Color.non:
             game.make_turn(Vector([1, 1]))
-            game.make_turn(Vector(game.current_player.make_move(game.board)))
+            game.make_turn(Vector(game.current_player.make_move(game)))
             if game.board.map[1][2] == Color.non:
                 game.make_turn(Vector([1, 2]))
             elif game.board.map[2][1] == Color.non:
@@ -199,7 +199,7 @@ def test_game_cycle_with_bot(bot_and_human_players):
             return
     else:
         game.make_turn(Vector([1, 1]))
-        game.make_turn(Vector(game.current_player.make_move(game.board)))
+        game.make_turn(Vector(game.current_player.make_move(game)))
         if game.board.map[2][2] == Color.non:
             game.make_turn(Vector([2, 2]))
         else:

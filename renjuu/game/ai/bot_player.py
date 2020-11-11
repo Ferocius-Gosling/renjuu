@@ -13,8 +13,8 @@ class Bot(Player):
             y = random.randint(0, game.board.height - 1)
             vec = Vector([x, y])
             while game.board[vec] != Color.non:
-                x = random.randint(0, game.width - 1)
-                y = random.randint(0, game.height - 1)
+                x = random.randint(0, game.board.width - 1)
+                y = random.randint(0, game.board.height - 1)
                 vec = Vector([x, y])
             return x, y
         else:

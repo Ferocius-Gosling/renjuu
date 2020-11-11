@@ -5,7 +5,7 @@ from renjuu.managers.stat_manager import stat_constructor, stat_inc
 
 
 class Game:
-    def __init__(self, width, height, length, players, foul_black, is_smart):
+    def __init__(self, width, height, length, players, foul_black=False, is_smart=False):
         self.board = board.Board(width, height, length)
         self.with_foul = foul_black
         self.smart_bot = is_smart
@@ -44,6 +44,8 @@ class Game:
                     and self.check_foul_move(v):
                 return
             else:
+                if self.current_player.color == Color.black:
+                    print(v)
                 self.board.put_stone(v, self.current_player.color)
                 self.moves.append(v)
                 self.check_winner(v, self.current_player.color)
