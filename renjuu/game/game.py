@@ -44,8 +44,6 @@ class Game:
                     and self.check_foul_move(v):
                 return
             else:
-                if self.current_player.color == Color.black:
-                    print(v)
                 self.board.put_stone(v, self.current_player.color)
                 self.moves.append(v)
                 self.check_winner(v, self.current_player.color)
