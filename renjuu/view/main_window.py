@@ -1,26 +1,28 @@
 from renjuu.game.game import Game
-from renjuu.game import params as gp, const as c
+from renjuu.game import params as game_params, const
 from renjuu.game.player import HumanPlayer
-from renjuu.game.ai.bot_player import Bot
+from renjuu.game.ai.bot_player import RandomBot, SmartBot
+from renjuu.game.scoreboard import Scoreboard
 from renjuu.game.vector import Vector
-from renjuu.view import params as p, button as b
+from renjuu.view import params as view_params, button
 from renjuu.view.click_handler import ClickHandler
-from renjuu.view.utils import get_coordinates, info_inc, info_dec
+from renjuu.view.utils import get_coordinates
 import pygame
 
 
 class MainWindow:
     def __init__(self):
         self.game = None
-        self.display = pygame.display.set_mode((p.screen_width,
-                                                p.screen_height))
-        self.display.fill(p.menu_color)
+        self.scoreboard = Scoreboard("scores")
+        self.display = pygame.display.set_mode((view_params.screen_width,
+                                                view_params.screen_height))
+        self.display.fill(view_params.menu_color)
         self.clock = pygame.time.Clock()
 
     def open_start_menu(self):
-        start_button = b.Button(100, 65, p.board_color)
-        start_button.draw(self.display, p.screen_width // 2.5,
-                          p.screen_height // 2)
+        start_button = button.Button(100, 65, view_params.board_color)
+        start_button.draw(self.display, view_params.screen_width // 2.5,
+                          view_params.screen_height // 2)
         self.clock.tick(15)
         launching = True
         while launching:
@@ -30,48 +32,58 @@ class MainWindow:
             pygame.display.update()
 
     def open_settings_menu(self):
-        self.display.fill(p.menu_color)
+        self.display.fill(view_params.menu_color)
+        counter = button.CounterWithLimits(8, 2)
         buttons = []
-        start_button = b.Button(120, 70, p.black_color)
-        player_counter_button = b.Button(120, 70, p.menu_color, info="2")
-        inc_button = b.Button(50, 70, p.white_color)
-        dec_button = b.Button(50, 70, p.white_color)
-        foul_button = b.SwitchButton(120, 80,
-                                     [p.menu_color, p.menu_color],
-                                     ["Without foul", "With foul"],
-                                     [False, True])
-        difficult_button = b.SwitchButton(120, 80,
-                                          [p.menu_color, p.menu_color],
-                                          ['random bot', 'smart bot'],
+        start_button = button.Button(120, 70, view_params.black_color)
+        player_counter_button = button.Button(120, 70, view_params.menu_color,
+                                              info="2")
+        inc_button = button.Button(50, 70, view_params.white_color)
+        dec_button = button.Button(50, 70, view_params.white_color)
+        foul_button = button.SwitchButton(120, 80,
+                                          [view_params.menu_color,
+                                           view_params.menu_color],
+                                          ["Without foul", "With foul"],
                                           [False, True])
+        # difficult_button = button.SwitchButton(120, 80,
+        #                                        [view_params.menu_color, view_params.menu_color],
+        #                                        ['random bot', 'smart bot'],
+        #                                        [False, True])
         switches = []
         i = 1
-        for color in p.colors:
-            buttons.append(b.SwitchButton(50, 50,
-                                          [color, p.menu_color],
-                                          [None, None],
-                                          [c.Color(i), c.Color(i)]))
+        for color in view_params.colors:
+            buttons.append(button.SwitchButton(50, 50,
+                                               [color,
+                                                view_params.menu_color],
+                                               [None, None],
+                                               [const.Color(i),
+                                                const.Color(i)]))
             i += 1
         for i in range(8):
-            switches.append(b.SwitchButton(100, 50,
-                                           [p.menu_color, p.menu_color],
-                                           ["Human", "Bot"],
-                                           [HumanPlayer(
-                                               buttons[i].current_item),
-                                            Bot(buttons[i].current_item,
-                                                c.PlayerEntity.bot)]))
+            switches.append(button.SwitchButton(100, 50,
+                                                [view_params.menu_color,
+                                                 view_params.menu_color,
+                                                 view_params.menu_color],
+                                                ["Human", "Random bot",
+                                                 "Smart bot"],
+                                                [HumanPlayer(
+                                                 buttons[i].current_item),
+                                                 RandomBot(buttons[i].current_item,
+                                                           const.PlayerEntity.bot),
+                                                 SmartBot(buttons[i].current_item,
+                                                          const.PlayerEntity.bot)]))
         choice = True
         while choice:
             self.draw_button(75, 50, player_counter_button, buttons)
             self.draw_button(140, 50, player_counter_button, switches)
             player_counter_button.draw(self.display, 300, 100)
             inc_button.draw(self.display, 240, 100, player_counter_button,
-                            action=info_inc)
+                            action=counter.button_value_increment_with_limit)
             dec_button.draw(self.display, 400, 100, player_counter_button,
-                            action=info_dec)
+                            action=counter.button_value_decrement_with_limit)
             start_button.draw(self.display, 570, 300)
             foul_button.draw(self.display, 300, 200)
-            difficult_button.draw(self.display, 300, 300)
+            # difficult_button.draw(self.display, 300, 300)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     choice = False
@@ -79,15 +91,14 @@ class MainWindow:
                 choice = False
                 self.game_on_board(self.collect_players(
                     int(player_counter_button.info), switches),
-                    foul_button.current_item,
-                    difficult_button.current_item)
+                    foul_button.current_item)
             pygame.display.update()
 
-    def game_on_board(self, players, with_foul, difficult):
-        self.game = Game(gp.board_width, gp.board_height, gp.length_to_win,
-                         players, with_foul, difficult)
-        gp.PLAYER_COUNT = len(self.game.players)
-        self.display.blit(p.board_back, (0, 0))
+    def game_on_board(self, players, with_foul):
+        self.game = Game(game_params.board_width, game_params.board_height, game_params.length_to_win,
+                         players, with_foul)
+        game_params.PLAYER_COUNT = len(self.game.players)
+        self.display.blit(view_params.board_back, (0, 0))
         pygame.time.wait(200)
         click_handler = ClickHandler()
         cycle = True
@@ -99,7 +110,7 @@ class MainWindow:
             click_pos = pygame.mouse.get_pos()
             click = pygame.mouse.get_pressed()
             current_player = self.game.current_player
-            if current_player.entity == c.PlayerEntity.human:
+            if current_player.entity == const.PlayerEntity.human:
                 if click_handler.check_click(click_pos, click):
                     if click_handler.handle() is not None:
                         x, y = click_handler.handle()
@@ -116,15 +127,15 @@ class MainWindow:
             if self.game.winner is not None:
                 pygame.time.wait(150)
                 cycle = False
-                self.game.update_stat("scores")
+                self.scoreboard.update_stat(self.game)
                 self.end_game()
             self.update_map()
             pygame.display.update()
 
     def end_game(self):
-        self.display.fill(p.board_color)
-        again_button = b.Button(120, 70, p.blue_color)
-        quit_button = b.Button(120, 70, p.red_color)
+        self.display.fill(view_params.board_color)
+        again_button = button.Button(120, 70, view_params.blue_color)
+        quit_button = button.Button(120, 70, view_params.red_color)
         game_over = True
         while game_over:
             again_button.draw(self.display, 230, 200, action=None)
@@ -143,15 +154,15 @@ class MainWindow:
     def update_map(self):
         for i in range(self.game.board.width):
             for j in range(self.game.board.height):
-                if self.game.board.map[i][j] != c.Color.non:
+                if self.game.board.map[i][j] != const.Color.non:
                     self.draw_stone(self.game.board.map[i][j],
                                     get_coordinates(i, j))
 
     def clear(self):
-        self.display.blit(p.board_back, (0, 0))
+        self.display.blit(view_params.board_back, (0, 0))
 
     def draw_stone(self, color, pos):
-        circle_color = p.check_color[color]
+        circle_color = view_params.check_color[color]
         pygame.draw.circle(self.display, circle_color, pos, 10)
 
     def draw_button(self, x, y, counter, buttons):
@@ -160,7 +171,7 @@ class MainWindow:
             if i < int(counter.info):
                 button.draw(self.display, x, y + i * 65)
             else:
-                b.hide(button, self.display, x, y + i * 65)
+                button.hide(self.display, x, y + i * 65)
             i += 1
 
     def collect_players(self, counter, switches):

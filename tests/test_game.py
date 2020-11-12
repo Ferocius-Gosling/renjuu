@@ -2,7 +2,7 @@ import os
 import unittest
 import pytest
 from renjuu.game import game as g
-from renjuu.game.ai.bot_player import Bot
+from renjuu.game.ai.bot_player import RandomBot
 from renjuu.game.const import Color, PlayerEntity
 from renjuu.game.player import HumanPlayer
 from renjuu.game.vector import Vector
@@ -15,7 +15,7 @@ def two_human_players():
 
 @pytest.fixture()
 def bot_and_human_players():
-    return [HumanPlayer(Color.black), Bot(Color.white, PlayerEntity.bot)]
+    return [HumanPlayer(Color.black), RandomBot(Color.white, PlayerEntity.bot)]
 
 
 @pytest.fixture()
@@ -65,18 +65,6 @@ def test_check_winner(game, c1, c2, c3, expected):
     assert game.winner == Color.black
 
 
-def test_update_stat(game):
-    game.board.put_stone(Vector([0, 0]), Color.black)
-    game.board.put_stone(Vector([0, 1]), Color.black)
-    game.board.put_stone(Vector([0, 2]), Color.black)
-    game.check_winner(Vector([0, 2]), Color.black)
-    game.update_stat("test_update")
-    assert os.path.exists("test_update.json")
-    assert os.path.exists("test_update.txt")
-    os.remove("test_update.txt")
-    os.remove("test_update.json")
-
-
 def test_check_draw(two_human_players):
     game = g.Game(3, 3, 4, two_human_players)
     for i in range(game.board.width):
@@ -99,12 +87,12 @@ def test_game_cycle(game):
                      ([HumanPlayer(Color.black), HumanPlayer(Color.white), HumanPlayer(Color.red)],
                      Color.red),
                      ([HumanPlayer(Color.black), HumanPlayer(Color.white),
-                       Bot(Color.red, PlayerEntity.bot)], Color.white),
-                     ([HumanPlayer(Color.black), Bot(Color.white, PlayerEntity.bot),
-                       Bot(Color.red, PlayerEntity.bot)], Color.black),
-                     ([HumanPlayer(Color.black), Bot(Color.white, PlayerEntity.bot),
+                       RandomBot(Color.red, PlayerEntity.bot)], Color.white),
+                     ([HumanPlayer(Color.black), RandomBot(Color.white, PlayerEntity.bot),
+                       RandomBot(Color.red, PlayerEntity.bot)], Color.black),
+                     ([HumanPlayer(Color.black), RandomBot(Color.white, PlayerEntity.bot),
                        HumanPlayer(Color.red)], Color.red),
-                     ([Bot(Color.black, PlayerEntity.bot), HumanPlayer(Color.white),
+                     ([RandomBot(Color.black, PlayerEntity.bot), HumanPlayer(Color.white),
                        HumanPlayer(Color.red, PlayerEntity.bot)], Color.white)
                      ])
 def test_undo_moves(players, expected):

@@ -1,11 +1,28 @@
+from abc import ABC
+
 import pygame
+import abc
 from renjuu.view import params as p
 
 
-class Button:
-    def __init__(self, width, height, color, info=None):
+class AbstractButton(abc.ABC):
+    def __init__(self, width, height):
         self.width = width
         self.height = height
+        self.X = None
+        self.Y = None
+
+    def draw(self, *args, **kwargs):
+        pass
+
+    def hide(self, display, x, y):
+        pygame.draw.rect(display, p.menu_color,
+                         (x, y, self.width, self.height))
+
+
+class Button(AbstractButton):
+    def __init__(self, width, height, color, info=None):
+        super().__init__(width, height)
         self.color = color
         self.info = info
         self.is_pressed = False
@@ -29,17 +46,23 @@ class Button:
             if click[0] == 0:
                 self.is_pressed = False
 
-    def hide(self, display, x, y):
-        pygame.draw.rect(display, p.menu_color,
-                         (x, y, self.width, self.height))
+
+class CounterWithLimits:
+    def __init__(self, max_player_count: int = 0,
+                 min_player_count: int = 0):
+        self.max_count = max_player_count
+        self.min_count = min_player_count
+
+    def button_value_increment_with_limit(self, button):
+        button.info = str(min(self.max_count, int(button.info) + 1))
+
+    def button_value_decrement_with_limit(self, button):
+        button.info = str(max(self.min_count, int(button.info) - 1))
 
 
-class SwitchButton:
+class SwitchButton(AbstractButton):
     def __init__(self, width, height, colors: list, info: list, items: list):
-        self.width = width
-        self.height = height
-        self.X = None
-        self.Y = None
+        super().__init__(width, height)
         self.colors = colors
         self.info = info
         self.items = items
@@ -80,8 +103,3 @@ class SwitchButton:
             if click[0] == 1:
                 self.switch()
                 pygame.time.wait(150)
-
-
-def hide(button, display, x, y):
-    pygame.draw.rect(display, p.menu_color,
-                     (x, y, button.width, button.height))

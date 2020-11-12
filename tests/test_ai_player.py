@@ -1,6 +1,6 @@
 import pytest
 
-from renjuu.game.ai.bot_player import Bot
+from renjuu.game.ai.bot_player import SmartBot
 from renjuu.game.const import Color, PlayerEntity
 from renjuu.game.game import Game
 from renjuu.game.player import HumanPlayer
@@ -11,8 +11,7 @@ from renjuu.game.vector import Vector
 def game():
     return Game(15, 15, 5,
                 [HumanPlayer(Color.black),
-                 Bot(Color.white, PlayerEntity.bot)],
-                is_smart=True)
+                 SmartBot(Color.white, PlayerEntity.bot)])
 
 
 @pytest.fixture()
