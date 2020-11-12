@@ -1,5 +1,3 @@
-from abc import ABC
-
 import pygame
 import abc
 from renjuu.view import params as p

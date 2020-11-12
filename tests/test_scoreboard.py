@@ -42,7 +42,8 @@ def test_stat_inc(scoreboard, data):
     temp1 = data['black']
     temp2 = data['white']
     scoreboard.stat_increment(data, Color.non,
-                [HumanPlayer(Color.black), HumanPlayer(Color.white)])
+                              [HumanPlayer(Color.black),
+                               HumanPlayer(Color.white)])
     assert temp1 + 1 == data['black']
     assert temp2 + 1 == data['white']
 

@@ -1,4 +1,3 @@
-import os
 import unittest
 import pytest
 from renjuu.game import game as g
@@ -37,10 +36,14 @@ def test_game_init_with_human(two_human_players):
 
 
 @pytest.mark.parametrize("test_input, expected",
-            [([HumanPlayer(Color.red), HumanPlayer(Color.white), HumanPlayer(Color.black)],
-            [Color.black, Color.white, Color.red]),
-            ([HumanPlayer(Color.gray), HumanPlayer(Color.green), HumanPlayer(Color.yellow)],
-            [Color.yellow, Color.green, Color.gray])])
+                         [([HumanPlayer(Color.red),
+                            HumanPlayer(Color.white),
+                            HumanPlayer(Color.black)],
+                           [Color.black, Color.white, Color.red]),
+                          ([HumanPlayer(Color.gray),
+                            HumanPlayer(Color.green),
+                            HumanPlayer(Color.yellow)],
+                           [Color.yellow, Color.green, Color.gray])])
 def test_sorted_players(test_input, expected):
     game = g.Game(5, 5, 3, test_input)
     assert game.players[0].color == expected[0]
@@ -83,18 +86,26 @@ def test_game_cycle(game):
 
 
 @pytest.mark.parametrize("players, expected",
-                    [([HumanPlayer(Color.white), HumanPlayer(Color.black)], Color.black),
-                     ([HumanPlayer(Color.black), HumanPlayer(Color.white), HumanPlayer(Color.red)],
-                     Color.red),
-                     ([HumanPlayer(Color.black), HumanPlayer(Color.white),
-                       RandomBot(Color.red, PlayerEntity.bot)], Color.white),
-                     ([HumanPlayer(Color.black), RandomBot(Color.white, PlayerEntity.bot),
-                       RandomBot(Color.red, PlayerEntity.bot)], Color.black),
-                     ([HumanPlayer(Color.black), RandomBot(Color.white, PlayerEntity.bot),
-                       HumanPlayer(Color.red)], Color.red),
-                     ([RandomBot(Color.black, PlayerEntity.bot), HumanPlayer(Color.white),
-                       HumanPlayer(Color.red, PlayerEntity.bot)], Color.white)
-                     ])
+                         [([HumanPlayer(Color.white),
+                            HumanPlayer(Color.black)],
+                           Color.black),
+                          ([HumanPlayer(Color.black), HumanPlayer(Color.white),
+                            HumanPlayer(Color.red)],
+                           Color.red),
+                          ([HumanPlayer(Color.black), HumanPlayer(Color.white),
+                            RandomBot(Color.red, PlayerEntity.bot)],
+                           Color.white),
+                          ([HumanPlayer(Color.black),
+                            RandomBot(Color.white, PlayerEntity.bot),
+                            RandomBot(Color.red, PlayerEntity.bot)],
+                           Color.black),
+                          ([HumanPlayer(Color.black),
+                            RandomBot(Color.white, PlayerEntity.bot),
+                            HumanPlayer(Color.red)], Color.red),
+                          ([RandomBot(Color.black, PlayerEntity.bot),
+                            HumanPlayer(Color.white),
+                            HumanPlayer(Color.red, PlayerEntity.bot)],
+                           Color.white)])
 def test_undo_moves(players, expected):
     game = g.Game(5, 5, 3, players)
     game.make_turn(Vector([0, 0]))

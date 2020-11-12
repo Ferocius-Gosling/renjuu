@@ -31,4 +31,3 @@ class SmartBot(Player):
         values = list(weights_table.values())
         keys = list(weights_table.keys())
         return keys[values.index(max(values))]
-

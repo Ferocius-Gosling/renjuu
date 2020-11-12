@@ -5,9 +5,9 @@ from renjuu.game.const import GameMode
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--enemy', '-e', default='b', help='type of enemy player.'
-                                                           ' Default(b) - bot player'
-                                                           ' h - human player')
+    parser.add_argument('--enemy', '-e', default='b',
+                        help='type of enemy player. '
+                             'Default(b) - bot player, h - human player')
     from renjuu.game import params
 
     namespace = parser.parse_args()

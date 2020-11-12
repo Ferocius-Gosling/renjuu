@@ -45,10 +45,6 @@ class MainWindow:
                                            view_params.menu_color],
                                           ["Without foul", "With foul"],
                                           [False, True])
-        # difficult_button = button.SwitchButton(120, 80,
-        #                                        [view_params.menu_color, view_params.menu_color],
-        #                                        ['random bot', 'smart bot'],
-        #                                        [False, True])
         switches = []
         i = 1
         for color in view_params.colors:
@@ -60,18 +56,15 @@ class MainWindow:
                                                 const.Color(i)]))
             i += 1
         for i in range(8):
-            switches.append(button.SwitchButton(100, 50,
-                                                [view_params.menu_color,
-                                                 view_params.menu_color,
-                                                 view_params.menu_color],
-                                                ["Human", "Random bot",
-                                                 "Smart bot"],
-                                                [HumanPlayer(
-                                                 buttons[i].current_item),
-                                                 RandomBot(buttons[i].current_item,
-                                                           const.PlayerEntity.bot),
-                                                 SmartBot(buttons[i].current_item,
-                                                          const.PlayerEntity.bot)]))
+            switches.append(button.SwitchButton(
+                100, 50,
+                [view_params.menu_color,
+                 view_params.menu_color,
+                 view_params.menu_color],
+                ["Human", "Random bot", "Smart bot"],
+                [HumanPlayer(buttons[i].current_item),
+                 RandomBot(buttons[i].current_item, const.PlayerEntity.bot),
+                 SmartBot(buttons[i].current_item, const.PlayerEntity.bot)]))
         choice = True
         while choice:
             self.draw_button(75, 50, player_counter_button, buttons)
@@ -95,7 +88,8 @@ class MainWindow:
             pygame.display.update()
 
     def game_on_board(self, players, with_foul):
-        self.game = Game(game_params.board_width, game_params.board_height, game_params.length_to_win,
+        self.game = Game(game_params.board_width, game_params.board_height,
+                         game_params.length_to_win,
                          players, with_foul)
         game_params.PLAYER_COUNT = len(self.game.players)
         self.display.blit(view_params.board_back, (0, 0))
@@ -167,11 +161,11 @@ class MainWindow:
 
     def draw_button(self, x, y, counter, buttons):
         i = 0
-        for button in buttons:
+        for control in buttons:
             if i < int(counter.info):
-                button.draw(self.display, x, y + i * 65)
+                control.draw(self.display, x, y + i * 65)
             else:
-                button.hide(self.display, x, y + i * 65)
+                control.hide(self.display, x, y + i * 65)
             i += 1
 
     def collect_players(self, counter, switches):

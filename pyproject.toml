@@ -1,6 +1,6 @@
 [tool.coverage.run]
 source = ["renjuu"]
-omit = ["*/main.py", "renjuu/view/", ".venv/*"]
+omit = ["*/__main__.py", "renjuu/view/*", "venv/*", "setup.py", "./pytest_cache/*"]
 
 [tool.coverage.report]
 show_missing = true
