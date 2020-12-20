@@ -25,19 +25,19 @@ class RequestMonitor(threading.Thread):
                 self.player_params = self.request[RequestParams.PLAYERS]
                 player_id = self.request[RequestParams.ID].value - 1
                 player = self.request[RequestParams.PLAYERS][player_id]
-                self.id = player[RequestParams.ID].value
+                if self.id is None:
+                    self.id = player[RequestParams.ID].value
                 print(self.id, 'player id')
                 self.max_players = self.request[RequestParams.MAX_PLAYERS]
                 print(self.max_players)
             elif self.request[RequestParams.TYPE] == RequestType.BEGIN:
-                self.start_button.is_pressed = self.id == 1
+                print(self.request[RequestParams.ID] == 1, 'is admin pushed')
+                self.start_button.is_pressed = self.request[RequestParams.ID] == 1
             elif self.request[RequestParams.TYPE] == RequestType.MOVE:
                 place = self.request[RequestParams.MOVE]
                 self.game.make_turn(Vector([place[0], place[1]]))
             elif self.request[RequestParams.TYPE] == RequestType.RESTART:
-                self.restart_button.is_pressed = self.id == 1
-            elif self.request[RequestParams.TYPE] == RequestType.WINNING:
-                self.game.winner = self.request[RequestParams.ID]
+                self.restart_button.is_pressed = self.request[RequestParams.ID] == 1
 
 
 class GameClient:
@@ -52,14 +52,15 @@ class GameClient:
         self.client_socket.connect((self.server_ip, self.port))
         data_to_send = {RequestParams.NAME: name}
         print(data_to_send)
-        data_to_send = pickle.dumps(data_to_send)
+        data_to_send = data_to_send
         print(data_to_send, 'from client')
         self.send_message(data_to_send)
         self.message_monitor = RequestMonitor(self.client_socket)
         self.message_monitor.start()
 
     def send_message(self, message):
-        request_type = message[RequestParams.TYPE]
+        request_type = message.get(RequestParams.TYPE)
+        print(request_type, 'request type')
         if request_type == RequestType.EXIT:
             self.close_event()
         else:

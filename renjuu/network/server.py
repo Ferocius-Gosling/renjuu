@@ -27,7 +27,7 @@ class GameServer:
             if client not in self.clients:
                 self.clients.append(client)
                 data = client.recv(1024)
-                data = pickle.loads(pickle.loads(data))
+                data = pickle.loads(data)
                 data[RequestParams.ID] = Color(len(self.clients))
                 self.clients_params.append(data)
                 threading.Thread(target=self.request_handler,
@@ -39,11 +39,11 @@ class GameServer:
                                  RequestParams.ID: data[RequestParams.ID]}
                 for client_socket in self.clients:
                     client_socket.send(pickle.dumps(response_data))
-            time.sleep(1)
 
     def request_handler(self, client_socket: socket.socket):
         while True:
             request = client_socket.recv(1024)
+            print(request, 'server request handler')
             request = pickle.loads(request)
             if request[RequestParams.TYPE] == RequestType.EXIT:
                 self.clients.remove(client_socket)
@@ -51,8 +51,12 @@ class GameServer:
                     {RequestParams.NAME: request[RequestParams.NAME],
                      RequestParams.ID: request[RequestParams.ID]})
                 break
-
+            if request[RequestParams.TYPE] == RequestType.BEGIN or \
+                    request[RequestParams.TYPE] == RequestType.RESTART:
+                client_socket.send(pickle.dumps(request))
             for client in self.clients:
                 if client != client_socket:
-                    client.send(request)
-            time.sleep(1)
+                    client.send(pickle.dumps(request))
+
+    def close(self):
+        self.server_socket.close()

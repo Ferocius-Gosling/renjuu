@@ -56,8 +56,8 @@ class MainWindow:
         self.clock.tick(15)
         launching = True
         while launching:
-            start_server_button.draw(self.display, 340, 200)
-            connect_to_button.draw(self.display, 340, 310)
+            start_server_button.draw(self.display, 440, 200)
+            connect_to_button.draw(self.display, 440, 310)
             back_to_start_button.draw(self.display, 340, 420)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -151,10 +151,13 @@ class MainWindow:
                 if event.type == pygame.QUIT:
                     waiting_for_players = False
                     self.game_client.close_event()
+                    if self.game_server is not None:
+                        self.game_server.close()
             if start_button.is_pressed:
                 if self.game_client is not None:
                     self.game_client.send_message(message)
-                    if self.game_client.message_monitor.id != 1:
+                    if self.game_client.message_monitor.request[RequestParams.ID] != 1:
+                        print(self.game_client.message_monitor.request[RequestParams.ID], 'req params id')
                         continue
                 waiting_for_players = False
                 self.game_on_board(self.collect_players_from_button(
@@ -224,6 +227,7 @@ class MainWindow:
         game_params.PLAYER_COUNT = len(self.game.players)
         if self.game_client is not None:
             self.game_client.message_monitor.game = self.game
+            print(self.game_client.message_monitor.id, 'client id')
         self.display.blit(view_params.board_back, (0, 0))
         pygame.time.wait(200)
         click_handler = ClickHandler()
@@ -235,6 +239,9 @@ class MainWindow:
                     cycle = False
                     if self.game_client is not None:
                         self.game_client.close_event()
+                    if self.game_server is not None:
+                        self.game_server.close()
+                    pygame.quit()
             click_pos = pygame.mouse.get_pos()
             click = pygame.mouse.get_pressed()
             current_player = self.game.current_player
@@ -243,11 +250,13 @@ class MainWindow:
                     if click_handler.handle() is not None:
                         x, y = click_handler.handle()
                         if self.game_client is not None:
+                            print(current_player.color)
                             if current_player.color.value == self.game_client.message_monitor.id:
                                 message = {RequestParams.TYPE: RequestType.MOVE,
                                            RequestParams.ID:
                                                current_player.color.value,
                                            RequestParams.MOVE: (x, y)}
+                                print('put stone')
                                 if self.game.board[Vector([x, y])] == const.Color.non:
                                     self.game_client.send_message(message)
                                     self.game.make_turn(Vector([x, y]))
@@ -275,7 +284,8 @@ class MainWindow:
         restart_button = button.Button(120, 70, view_params.blue_color)
         quit_button = button.Button(120, 70, view_params.red_color)
         game_over = True
-        message = {RequestParams.TYPE: RequestType.RESTART}
+        message = {RequestParams.TYPE: RequestType.RESTART,
+                   RequestParams.ID: self.game_client.message_monitor.id}
         if self.game_client is not None:
             self.game_client.message_monitor.restart_button = restart_button
         while game_over:
@@ -289,7 +299,8 @@ class MainWindow:
             if restart_button.is_pressed:
                 if self.game_client is not None:
                     self.game_client.send_message(message)
-                    if self.game_client.message_monitor.id != 1:
+                    if self.game_client.message_monitor.request[RequestParams.ID] != 1:
+                        print(self.game_client.message_monitor.request[RequestParams.ID], 'req params id')
                         continue
                 game_over = False
                 self.game.restart()

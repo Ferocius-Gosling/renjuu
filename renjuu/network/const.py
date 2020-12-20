@@ -7,7 +7,7 @@ class RequestType(enum.IntEnum):
     MOVE = 3
     EXIT = 4
     RESTART = 5
-    WINNING = 6
+    CONNECTING = 6
 
 
 class RequestParams(enum.IntEnum):
