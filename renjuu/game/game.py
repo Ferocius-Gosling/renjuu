@@ -10,6 +10,8 @@ class Game:
         self.with_foul = foul_black
         self.smart_bot = is_smart
         self.players = sorted(players, key=lambda player: player.color)
+        self.players_params = None
+        self.max_players = None
         assert len(players) >= 2
         self._player_order = iter(self.players)
         self.current_player = next(self._player_order)

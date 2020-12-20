@@ -17,5 +17,5 @@ if __name__ == '__main__':
         params.type_of_enemy = GameMode.with_bot
 
     window = main_window.MainWindow()
-    window.open_settings_menu()
+    window.open_start_menu()
     pygame.quit()
