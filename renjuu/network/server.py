@@ -32,7 +32,8 @@ class GameServer:
                 threading.Thread(target=self.request_handler,
                                  args=(client,)).start()
                 # обработчик запросов для каждого нового клиента
-                response_data = {RequestParams.TYPE: RequestType.CURRENT_PLAYERS,
+                response_data = {RequestParams.TYPE:
+                                 RequestType.CURRENT_PLAYERS,
                                  RequestParams.PLAYERS: self.clients_params,
                                  RequestParams.MAX_PLAYERS: self.max_clients,
                                  RequestParams.ID: data[RequestParams.ID]}

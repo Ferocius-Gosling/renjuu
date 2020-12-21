@@ -29,12 +29,14 @@ class RequestMonitor(threading.Thread):
                     self.id = player[RequestParams.ID].value
                 self.max_players = self.request[RequestParams.MAX_PLAYERS]
             elif self.request[RequestParams.TYPE] == RequestType.BEGIN:
-                self.start_button.is_pressed = self.request[RequestParams.ID] == 1
+                self.start_button.is_pressed = \
+                    self.request[RequestParams.ID] == 1
             elif self.request[RequestParams.TYPE] == RequestType.MOVE:
                 place = self.request[RequestParams.MOVE]
                 self.game.make_turn(Vector([place[0], place[1]]))
             elif self.request[RequestParams.TYPE] == RequestType.RESTART:
-                self.restart_button.is_pressed = self.request[RequestParams.ID] == 1
+                self.restart_button.is_pressed = \
+                    self.request[RequestParams.ID] == 1
 
 
 class GameClient:
