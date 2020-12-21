@@ -1,3 +1,4 @@
 [tool.coverage.run]
 source = ["renjuu"]
-omit = ["*/__main__.py", "renjuu/view/*", "venv/*", "setup.py", "./pytest_cache/*"]
+omit = ["*/__main__.py", "renjuu/view/*", "venv/*", "setup.py",
+ "./pytest_cache/*", "renjuu/network/"]

@@ -27,11 +27,8 @@ class RequestMonitor(threading.Thread):
                 player = self.request[RequestParams.PLAYERS][player_id]
                 if self.id is None:
                     self.id = player[RequestParams.ID].value
-                print(self.id, 'player id')
                 self.max_players = self.request[RequestParams.MAX_PLAYERS]
-                print(self.max_players)
             elif self.request[RequestParams.TYPE] == RequestType.BEGIN:
-                print(self.request[RequestParams.ID] == 1, 'is admin pushed')
                 self.start_button.is_pressed = self.request[RequestParams.ID] == 1
             elif self.request[RequestParams.TYPE] == RequestType.MOVE:
                 place = self.request[RequestParams.MOVE]
@@ -51,21 +48,16 @@ class GameClient:
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client_socket.connect((self.server_ip, self.port))
         data_to_send = {RequestParams.NAME: name}
-        print(data_to_send)
-        data_to_send = data_to_send
-        print(data_to_send, 'from client')
         self.send_message(data_to_send)
         self.message_monitor = RequestMonitor(self.client_socket)
         self.message_monitor.start()
 
     def send_message(self, message):
         request_type = message.get(RequestParams.TYPE)
-        print(request_type, 'request type')
         if request_type == RequestType.EXIT:
             self.close_event()
         else:
             self.client_socket.send(pickle.dumps(message))
-            print(message, 'from client in send')
 
     def close_event(self):
         request_exit = {RequestParams.TYPE: RequestType.EXIT}

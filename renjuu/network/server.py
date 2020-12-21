@@ -1,6 +1,5 @@
 import socket
 import threading
-import time
 import pickle
 
 from renjuu.game.const import Color
@@ -42,14 +41,9 @@ class GameServer:
 
     def request_handler(self, client_socket: socket.socket):
         while True:
-            request = client_socket.recv(1024)
-            print(request, 'server request handler')
-            request = pickle.loads(request)
+            request = pickle.loads(client_socket.recv(1024))
             if request[RequestParams.TYPE] == RequestType.EXIT:
                 self.clients.remove(client_socket)
-                self.clients_params.remove(
-                    {RequestParams.NAME: request[RequestParams.NAME],
-                     RequestParams.ID: request[RequestParams.ID]})
                 break
             if request[RequestParams.TYPE] == RequestType.BEGIN or \
                     request[RequestParams.TYPE] == RequestType.RESTART:
