@@ -1,4 +1,3 @@
-import pytest
 import time
 
 from renjuu.network.const import RequestType, RequestParams

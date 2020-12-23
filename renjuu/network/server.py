@@ -48,6 +48,8 @@ class GameServer:
                 break
             if request[RequestParams.TYPE] == RequestType.BEGIN or \
                     request[RequestParams.TYPE] == RequestType.RESTART:
+                if request[RequestParams.ID] != 1:
+                    continue
                 client_socket.send(pickle.dumps(request))
             for client in self.clients:
                 if client != client_socket:
